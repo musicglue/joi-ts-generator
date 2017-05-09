@@ -123,7 +123,7 @@ const runTypeGenerator = () => {
     .filter(t => !t.skip)
     .forEach(type => output.unshift(writeTypeAlias(type.name, type.type)));
 
-  fs.writeFileSync(destPath, output.join("\n"));
+  fs.writeFileSync(destPath, output.join("\n\n"));
 };
 
 runTypeGenerator();
