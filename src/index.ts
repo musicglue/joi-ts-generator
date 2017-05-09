@@ -51,11 +51,15 @@ const unwrapArray = ({ _inner: { items } }: any): string => {
   return `${deriveType(item)}[]`;
 };
 
-const unwrapNotes = (type: string, notes: string[]): string => {
+const nameFromNotes = (notes: string[]): string => {
   const note = notes.find(n => typeCheck.test(n));
   if (!note) { throw new Error("Must provide type information through notes."); }
 
-  const name = note.replace(typeCheck, "");
+  return note.replace(typeCheck, "");
+};
+
+const unwrapNotes = (type: string, notes: string[]): string => {
+  const name = nameFromNotes(notes);
   addDiscoveredType({ name, type });
 
   return name;
@@ -112,9 +116,10 @@ const runTypeGenerator = () => {
     .map((typeName: string) => {
       const type: any = (objects as any)[typeName];
       if (usableNotes(type)) {
+        const name = nameFromNotes(type._notes);
         const writer = typeWriters[type._type];
-        addDiscoveredType({ name: typeName, skip: true });
-        return writer(typeName, type);
+        addDiscoveredType({ name, skip: true });
+        return writer(name, type);
       }
       return "";
     });
