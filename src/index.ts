@@ -28,6 +28,8 @@ const addDiscoveredType = (type: IDiscoverableType) => {
 const usableNotes = ({ _notes }: any): boolean => !!_notes.find((n: any) => typeCheck.test(n));
 
 const getUnion = (node: any): any[] => Array.from(get(node, "_valids._set", []));
+const propName = ({ key, schema }: any): string =>
+  (get(schema, "_flags.presence", "optional") as string === "required") ? key : `${key}?`;
 
 const joiToTypescript = (type: string) => {
   switch (type) {
@@ -90,7 +92,7 @@ const resolveTypeDefinition = (node: any): string => {
 
 const writeInterfaceType = (typeName: string, { _inner: { children }}: any): string => `
 export interface ${typeName} {
-${children.map((child: any) => `  ${child.key}: ${deriveType(child.schema)};`).join("\n")}
+${children.map((child: any) => `  ${propName(child)}: ${deriveType(child.schema)};`).join("\n")}
 }
 `;
 

@@ -19,6 +19,7 @@ const addDiscoveredType = (type) => {
 };
 const usableNotes = ({ _notes }) => !!_notes.find((n) => typeCheck.test(n));
 const getUnion = (node) => Array.from(lodash_1.get(node, "_valids._set", []));
+const propName = ({ key, schema }) => (lodash_1.get(schema, "_flags.presence", "optional") === "required") ? key : `${key}?`;
 const joiToTypescript = (type) => {
     switch (type) {
         case "date":
@@ -79,7 +80,7 @@ const resolveTypeDefinition = (node) => {
 };
 const writeInterfaceType = (typeName, { _inner: { children } }) => `
 export interface ${typeName} {
-${children.map((child) => `  ${child.key}: ${deriveType(child.schema)};`).join("\n")}
+${children.map((child) => `  ${propName(child)}: ${deriveType(child.schema)};`).join("\n")}
 }
 `;
 const writeTypeAlias = (typeName, type) => `export type ${typeName} = ${resolveTypeDefinition(type)};`;

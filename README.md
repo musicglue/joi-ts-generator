@@ -32,12 +32,12 @@ export const Currency = joi.string().notes("type:Currency");
 export const Package = joi.string().valid(["gold", "silver", "bronze"]).notes("type:Package");
 
 export const Purchase = joi.object().keys({
-  id: joi.string().guid(),
+  id: joi.string().guid().required(),
   country: Country,
-  currency: Currency,
-  cents: joi.number(),
+  currency: Currency.required(),
+  cents: joi.number().required(),
   notes: joi.array().items(joi.string()),
-  package: Package,
+  package: Package.required(),
 }).notes("type:Purchase");
 ```
 
@@ -51,10 +51,10 @@ export type Package = "gold" | "silver" | "bronze";
 
 export interface Purchase {
   id: Uuid;
-  country: Country;
+  country?: Country;
   currency: Currency;
   cents: number;
-  notes: string[];
+  notes?: string[];
   package: Package;
 }
 ```
