@@ -13,7 +13,7 @@ const objects = require(sourcePath);
 const discoveredTypes = [];
 const typeCheck = /^type:/;
 const addDiscoveredType = (type) => {
-    if (lodash_1.find(discoveredTypes, lodash_1.pick(type, "name"))) {
+    if (discoveredTypes.find((typ) => typ.name === type.name)) {
         return;
     }
     discoveredTypes.push(type);
@@ -79,11 +79,9 @@ const resolveTypeDefinition = (node) => {
     }
     return out.join(" | ");
 };
-const writeInterfaceType = (typeName, { _inner: { children } }) => `
-export interface ${typeName} {
+const writeInterfaceType = (typeName, { _inner: { children } }) => `export interface ${typeName} {
 ${children.map((child) => `  ${propName(child)}: ${deriveType(child.schema)};`).join("\n")}
-}
-`;
+}`;
 const writeTypeAlias = (typeName, type) => `export type ${typeName} = ${resolveTypeDefinition(type)};`;
 const typeWriters = {
     array: writeTypeAlias,
