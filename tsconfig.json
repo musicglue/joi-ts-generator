@@ -9,7 +9,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "node_modules/@types"
+    "node_modules/@types/**/*.ts"
   ],
   "exclude": [
     "build",

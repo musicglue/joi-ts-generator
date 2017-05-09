@@ -3,8 +3,10 @@
 import fs = require("fs");
 import { find, get, pick, some } from "lodash";
 
-const sourcePath: string = process.argv[2];
-const destPath: string = process.argv[3];
+const argv: string[] = process.argv;
+
+const sourcePath: string = argv[2];
+const destPath: string = argv[3];
 
 if (!sourcePath && !destPath) { process.exit(1); }
 
@@ -21,7 +23,7 @@ const discoveredTypes: IDiscoverableType[] = [];
 const typeCheck = /^type:/;
 
 const addDiscoveredType = (type: IDiscoverableType) => {
-  if (find(discoveredTypes, pick(type, "name"))) { return; }
+  if (discoveredTypes.find((typ: IDiscoverableType) => typ.name === type.name)) { return; }
   discoveredTypes.push(type);
 };
 
@@ -90,11 +92,10 @@ const resolveTypeDefinition = (node: any): string => {
   return out.join(" | ");
 };
 
-const writeInterfaceType = (typeName: string, { _inner: { children }}: any): string => `
-export interface ${typeName} {
+const writeInterfaceType = (typeName: string, { _inner: { children }}: any): string =>
+`export interface ${typeName} {
 ${children.map((child: any) => `  ${propName(child)}: ${deriveType(child.schema)};`).join("\n")}
-}
-`;
+}`;
 
 const writeTypeAlias = (typeName: string, type: string): string =>
   `export type ${typeName} = ${resolveTypeDefinition(type)};`;

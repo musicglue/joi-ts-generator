@@ -3,8 +3,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const lodash_1 = require("lodash");
-const sourcePath = process.argv[2];
-const destPath = process.argv[3];
+const argv = process.argv;
+const sourcePath = argv[2];
+const destPath = argv[3];
 if (!sourcePath && !destPath) {
     process.exit(1);
 }
