@@ -1,0 +1,30 @@
+{
+  "name": "@musicglue/joi-ts-generator",
+  "version": "0.0.1",
+  "description": "Generate Typescript Types from Joi schemas",
+  "bin": {
+    "joi-ts-gen": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "repository": "https://github.com/musicglue/joi-ts-generator",
+  "author": "Music Glue",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "copy-executable": "mkdir -p dist && cp build/index.js dist/index.js",
+    "make-executable": "chmod +x build/index.js",
+    "prepublish": "npm run build; npm run copy-executable"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.64",
+    "@types/node": "^7.0.18",
+    "tslint": "^5.2.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "peerDependencies": {
+    "ts-node": "^3.0.4",
+    "typescript": "^2.3.2"
+  }
+}
