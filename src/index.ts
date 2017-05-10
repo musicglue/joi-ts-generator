@@ -1,14 +1,20 @@
 #!/usr/bin/env ts-node
 
 import fs = require("fs");
-import { find, get, pick, some } from "lodash";
+import * as joi from "joi";
+import { find, get, has, isObject, map, mapKeys, pick, pickBy, reduce, some } from "lodash";
+import * as path from "path";
+import { Factory } from "rosie";
+
+import typeTemplate, { baseTemplate } from "./coercionTemplate";
 
 const argv: string[] = process.argv;
 
 const sourcePath: string = argv[2];
-const destPath: string = argv[3];
+const typesPath: string = argv[3];
+const coercePath: string = argv[4];
 
-if (!sourcePath && !destPath) { process.exit(1); }
+if (!sourcePath || !typesPath || !coercePath) { process.exit(1); }
 
 // tslint:disable-next-line:no-var-requires
 const objects = require(sourcePath);
@@ -18,13 +24,21 @@ interface IDiscoverableType {
   type?: string;
   skip?: boolean;
 }
+interface IFactories { [k: string]: Factory.IFactory; }
+interface IJoiSchema extends joi.Schema {
+  _type: string;
+  _notes: string[];
+}
+interface ISchemae { [k: string]: IJoiSchema; }
 
 const discoveredTypes: IDiscoverableType[] = [];
+const schemaCheck = /Schema$/;
 const typeCheck = /^type:/;
 
 const addDiscoveredType = (type: IDiscoverableType) => {
-  if (discoveredTypes.find((typ: IDiscoverableType) => typ.name === type.name)) { return; }
-  discoveredTypes.push(type);
+  if (!find(discoveredTypes, ["name", type.name])) {
+    discoveredTypes.push(type);
+  }
 };
 
 const usableNotes = ({ _notes }: any): boolean => !!(_notes || []).find((n: any) => typeCheck.test(n));
@@ -110,25 +124,34 @@ const typeWriters: any = {
   string: writeTypeAlias,
 };
 
+const schemaNameCheck = (val: IJoiSchema, name: string) => schemaCheck.test(name);
+
+const transposeSchemaTypes = (res: ISchemae, val: IJoiSchema, key: string): ISchemae =>
+  ({ ...res, [key.replace(schemaCheck, "")]: val });
+
 const runTypeGenerator = () => {
-  const output: string[] = Object
-    .keys((objects as any))
-    .map((typeName: string) => {
-      const type: any = (objects as any)[typeName];
-      if (usableNotes(type)) {
-        const name = nameFromNotes(type._notes);
-        const writer = typeWriters[type._type];
-        addDiscoveredType({ name, skip: true });
-        return writer(name, type);
-      }
-      return "";
-    });
+  const exported = objects as any;
+
+  const filteredTypes = pickBy(exported, schemaNameCheck) as any;
+  const schemaTypes = reduce(filteredTypes, transposeSchemaTypes, {});
+  const factoryTypes = Object.keys(schemaTypes).filter(name => has(exported, `${name}Factory`));
+
+  const schemaOutput: string[] = map(schemaTypes, (schema, name) => {
+    const writer = typeWriters[schema._type];
+    addDiscoveredType({ name, skip: true });
+    return writer(name, schema);
+  });
 
   discoveredTypes
     .filter(t => !t.skip)
-    .forEach(type => output.unshift(writeTypeAlias(type.name, type.type)));
+    .forEach(type => schemaOutput.unshift(writeTypeAlias(type.name, type.type)));
 
-  fs.writeFileSync(destPath, output.join("\n\n"));
+  const coerceOutput: string[] = Object.keys(schemaTypes).map(type =>
+    typeTemplate(type, factoryTypes.some(n => n === type)));
+  coerceOutput.unshift(baseTemplate());
+
+  fs.writeFileSync(typesPath, schemaOutput.join("\n\n"));
+  fs.writeFileSync(coercePath, coerceOutput.join("\n\n"));
 };
 
 runTypeGenerator();

@@ -3,20 +3,22 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const lodash_1 = require("lodash");
+const coercionTemplate_1 = require("./coercionTemplate");
 const argv = process.argv;
 const sourcePath = argv[2];
-const destPath = argv[3];
-if (!sourcePath && !destPath) {
+const typesPath = argv[3];
+const coercePath = argv[4];
+if (!sourcePath || !typesPath || !coercePath) {
     process.exit(1);
 }
 const objects = require(sourcePath);
 const discoveredTypes = [];
+const schemaCheck = /Schema$/;
 const typeCheck = /^type:/;
 const addDiscoveredType = (type) => {
-    if (discoveredTypes.find((typ) => typ.name === type.name)) {
-        return;
+    if (!lodash_1.find(discoveredTypes, ["name", type.name])) {
+        discoveredTypes.push(type);
     }
-    discoveredTypes.push(type);
 };
 const usableNotes = ({ _notes }) => !!(_notes || []).find((n) => typeCheck.test(n));
 const getUnion = (node) => Array.from(lodash_1.get(node, "_valids._set", []));
@@ -91,22 +93,24 @@ const typeWriters = {
     object: writeInterfaceType,
     string: writeTypeAlias,
 };
+const schemaNameCheck = (val, name) => schemaCheck.test(name);
+const transposeSchemaTypes = (res, val, key) => (Object.assign({}, res, { [key.replace(schemaCheck, "")]: val }));
 const runTypeGenerator = () => {
-    const output = Object
-        .keys(objects)
-        .map((typeName) => {
-        const type = objects[typeName];
-        if (usableNotes(type)) {
-            const name = nameFromNotes(type._notes);
-            const writer = typeWriters[type._type];
-            addDiscoveredType({ name, skip: true });
-            return writer(name, type);
-        }
-        return "";
+    const exported = objects;
+    const filteredTypes = lodash_1.pickBy(exported, schemaNameCheck);
+    const schemaTypes = lodash_1.reduce(filteredTypes, transposeSchemaTypes, {});
+    const factoryTypes = Object.keys(schemaTypes).filter(name => lodash_1.has(exported, `${name}Factory`));
+    const schemaOutput = lodash_1.map(schemaTypes, (schema, name) => {
+        const writer = typeWriters[schema._type];
+        addDiscoveredType({ name, skip: true });
+        return writer(name, schema);
     });
     discoveredTypes
         .filter(t => !t.skip)
-        .forEach(type => output.unshift(writeTypeAlias(type.name, type.type)));
-    fs.writeFileSync(destPath, output.join("\n\n"));
+        .forEach(type => schemaOutput.unshift(writeTypeAlias(type.name, type.type)));
+    const coerceOutput = Object.keys(schemaTypes).map(type => coercionTemplate_1.default(type, factoryTypes.some(n => n === type)));
+    coerceOutput.unshift(coercionTemplate_1.baseTemplate());
+    fs.writeFileSync(typesPath, schemaOutput.join("\n\n"));
+    fs.writeFileSync(coercePath, coerceOutput.join("\n\n"));
 };
 runTypeGenerator();

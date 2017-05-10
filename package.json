@@ -11,20 +11,22 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "copy-executable": "mkdir -p dist && cp build/index.js dist/index.js",
-    "make-executable": "chmod +x build/index.js",
-    "prepublish": "npm run build; npm run copy-executable"
+    "make-executable": "chmod +x dist/index.js",
+    "prepublish": "npm run build; npm run make-executable"
   },
   "devDependencies": {
+    "@types/joi": "^10.3.2",
     "@types/lodash": "^4.14.64",
     "@types/node": "^7.0.18",
+    "@types/rosie": "^0.0.30",
     "joi": "^10.4.1",
     "ts-node": "^3.0.4",
     "tslint": "^5.2.0",
     "typescript": "^2.3.2"
   },
   "dependencies": {
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "rosie": "^1.6.0"
   },
   "peerDependencies": {
     "ts-node": "^3.0.4"
