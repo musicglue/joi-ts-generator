@@ -18,7 +18,7 @@ const addDiscoveredType = (type) => {
     }
     discoveredTypes.push(type);
 };
-const usableNotes = ({ _notes }) => !!_notes.find((n) => typeCheck.test(n));
+const usableNotes = ({ _notes }) => !!(_notes || []).find((n) => typeCheck.test(n));
 const getUnion = (node) => Array.from(lodash_1.get(node, "_valids._set", []));
 const propName = ({ key, schema }) => (lodash_1.get(schema, "_flags.presence", "optional") === "required") ? key : `${key}?`;
 const joiToTypescript = (type) => {

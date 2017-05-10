@@ -27,7 +27,7 @@ const addDiscoveredType = (type: IDiscoverableType) => {
   discoveredTypes.push(type);
 };
 
-const usableNotes = ({ _notes }: any): boolean => !!_notes.find((n: any) => typeCheck.test(n));
+const usableNotes = ({ _notes }: any): boolean => !!(_notes || []).find((n: any) => typeCheck.test(n));
 
 const getUnion = (node: any): any[] => Array.from(get(node, "_valids._set", []));
 const propName = ({ key, schema }: any): string =>
