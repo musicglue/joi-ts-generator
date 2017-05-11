@@ -103,6 +103,9 @@ const runTypeGenerator = () => {
     const schemaOutput = lodash_1.map(schemaTypes, (schema, name) => {
         const writer = typeWriters[schema._type];
         addDiscoveredType({ name, skip: true });
+        if (!schema._notes.find(n => n === `type:${name}`)) {
+            schema._notes.push(`type:${name}`);
+        }
         return writer(name, schema);
     });
     discoveredTypes
