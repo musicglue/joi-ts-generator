@@ -5,7 +5,7 @@ exports.baseTemplate = () => `import * as joi from "joi";
 import * as t from "../types.d";
 import * as s from ".";
 
-function coerceValue<T>(schema: joi.Schema) {
+export function coerceValue<T>(schema: joi.Schema) {
   return function(object: any, options?: any): T {
     let coerced: T;
     joi.validate(object, schema, options, (err, result) => {
@@ -16,13 +16,13 @@ function coerceValue<T>(schema: joi.Schema) {
   }
 }
 
-function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
+export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
   return (attrs?: any, options?: any): T =>
     coerceValue<T>(schema)(factory.build(attrs, options));
 }`;
 const coerceFactory = (name) => `  build: coerceFactory<t.${name}>(s.${name}Factory, s.${name}Schema),`;
 exports.default = (name, hasFactory) => lodash_1.compact([
-    `export const ${name} = {`,
+    `export const ${name}Utils = {`,
     hasFactory ? coerceFactory(name) : null,
     `  coerce: coerceValue<t.${name}>(s.${name}Schema),`,
     "};",
