@@ -5,10 +5,18 @@ export const baseTemplate = () =>
 import * as t from "../types.d";
 import * as s from ".";
 
+const defaultOptions: joi.ValidationOptions = {
+  convert: true,
+  allowUnknown: true,
+  stripUnknown: true,
+  presence: "optional",
+};
+
 export function coerceValue<T>(schema: joi.Schema) {
   return function(object: any, options?: any): T {
+    const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: T;
-    joi.validate(object, schema, options, (err, result) => {
+    joi.validate(object, schema, resolvedOptions, (err, result) => {
       if (err) { throw err; }
       coerced = result;
     });
