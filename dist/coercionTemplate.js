@@ -6,14 +6,14 @@ import * as t from "../types.d";
 import * as s from ".";
 
 const defaultOptions: joi.ValidationOptions = {
-  convert: true,
   allowUnknown: true,
-  stripUnknown: true,
+  convert: true,
   presence: "optional",
+  stripUnknown: true,
 };
 
 export function coerceValue<T>(schema: joi.Schema) {
-  return function(object: any, options?: any): T {
+  return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: T;
     joi.validate(object, schema, resolvedOptions, (err, result) => {
