@@ -3,7 +3,7 @@
   "version": "4.0.2",
   "description": "Generate Typescript Types from Joi schemas",
   "bin": {
-    "joi-ts-gen": "dist/index.js"
+    "joi-ts-gen": "dist/cli.js"
   },
   "main": "dist/index.js",
   "repository": "https://github.com/musicglue/joi-ts-generator",
@@ -11,7 +11,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "make-executable": "chmod +x dist/index.js",
+    "make-executable": "chmod +x dist/cli.js",
     "prepublish": "npm run build; npm run make-executable"
   },
   "devDependencies": {
