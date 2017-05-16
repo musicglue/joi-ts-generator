@@ -4,8 +4,10 @@ import fs = require("fs");
 import * as joi from "joi";
 import { find, get, has, isObject, map, mapKeys, pick, pickBy, reduce, some } from "lodash";
 import * as path from "path";
-import * as readPkgUp from "read-pkg-up";
 import { Factory } from "rosie";
+
+// tslint:disable-next-line:no-var-requires
+const readPkgUp = require("read-pkg-up");
 
 import typeTemplate, { baseTemplate } from "./coercionTemplate";
 
@@ -150,7 +152,7 @@ const schemaNameCheck = (val: IJoiSchema, name: string) => schemaCheck.test(name
 const transposeSchemaTypes = (res: ISchemae, val: IJoiSchema, key: string): ISchemae =>
   ({ ...res, [key.replace(schemaCheck, "")]: val });
 
-const relativeImportPath = (from, to) => {
+const relativeImportPath = (from: string, to: string) => {
   const p = path.relative(path.dirname(from), to).replace(/\.ts$/, "");
   return (p.charAt(0) === ".") ? p : `./${p}`;
 };
