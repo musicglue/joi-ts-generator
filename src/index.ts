@@ -183,8 +183,8 @@ const runTypeGenerator = () => {
 
   coerceOutput.unshift(baseTemplate(relativePathToInput, relativePathToTypes));
 
-  fs.writeFileSync(typesPath, schemaOutput.join("\n\n"));
-  fs.writeFileSync(utilsPath, coerceOutput.join("\n\n"));
+  fs.writeFileSync(typesPath, `${schemaOutput.join("\n\n")}\n`);
+  fs.writeFileSync(utilsPath, `${coerceOutput.join("\n\n")}\n`);
 };
 
 runTypeGenerator();
