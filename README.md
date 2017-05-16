@@ -27,11 +27,11 @@ such as the following:
 
 You can then rebuild your types by running `npm run regenerate-joi-types`.
 
-### Definining
+### Defining
 
 If you define Joi schemae that look like the following:
 
-```es6
+```ts
 import joi = require("joi");
 
 export const Country = joi.string().notes("type:Country");
@@ -65,3 +65,19 @@ export interface Purchase {
   package: Package;
 }
 ```
+
+
+### Troubleshooting
+
+If you are defining string types and find that you get unexpected results, please follow the following:
+
+```ts
+import * as joi from "joi";
+import cloneSchema from "@musicglue/joi-ts-generator"
+
+export const Country = cloneSchema(joi.string());
+export const Currency = cloneSchema(joi.string());
+```
+
+This prevents our internals from overwriting themselves as we parse the schemae. Joi objects are immutable,
+other than the entrypoint...

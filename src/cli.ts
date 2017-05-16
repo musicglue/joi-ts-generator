@@ -113,7 +113,6 @@ const deriveType = (schema: any) => {
     return "Uuid";
   }
   if (alternativesCheck(schema)) {
-    console.dir(schema, { depth: 10, color: true });
     const types = schema._inner.matches.map((type: any) => deriveType(type.schema));
     return types.join(" | ");
   }
