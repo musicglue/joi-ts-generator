@@ -1,7 +1,10 @@
+// tslint:disable:ordered-imports
+
 import { compact } from "lodash";
 
 export const baseTemplate = (schemasPath: string, typesPath: string) =>
 `import * as joi from "joi";
+
 import * as s from "${schemasPath}";
 import * as t from "${typesPath}";
 
