@@ -13,7 +13,15 @@ such as the following:
 ```json
 {
   "scripts": {
-    "regenerate-joi-types": "joi-ts-gen <rootPath>/src/joiTypes.ts <rootPath>/src/types.d.ts"
+    "regenerate-joi-types": "joi-ts-gen"
+  },
+  // ...
+  "joiTsGenerator": {
+    "input": "./src/schemas/index.ts",
+    "outputs": {
+      "types": "./src/schemas/types.ts",
+      "utils": "./src/schemas/utils.ts"
+    }
   }
 }
 ```
