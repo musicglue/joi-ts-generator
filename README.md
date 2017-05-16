@@ -15,7 +15,6 @@ such as the following:
   "scripts": {
     "regenerate-joi-types": "joi-ts-gen"
   },
-  // ...
   "joiTsGenerator": {
     "input": "./src/schemas/index.ts",
     "outputs": {
