@@ -6,18 +6,41 @@ import { find, get, has, isObject, map, mapKeys, pick, pickBy, reduce, some } fr
 import * as path from "path";
 import { Factory } from "rosie";
 
+// tslint:disable-next-line:no-var-requires
+const readPkgUp = require("read-pkg-up");
+
 import typeTemplate, { baseTemplate } from "./coercionTemplate";
 
-const argv: string[] = process.argv;
+const packageJson = readPkgUp.sync();
 
-const sourcePath: string = argv[2];
-const typesPath: string = argv[3];
-const coercePath: string = argv[4];
+if (!packageJson.pkg) {
+  throw new Error(`Could not find package.json in: ${process.cwd()}`);
+}
 
-if (!sourcePath || !typesPath || !coercePath) { process.exit(1); }
+const configSchema = joi.object().keys({
+  joiTsGenerator: joi.object().keys({
+    input: joi.string().required(),
+    outputs: joi.object().keys({
+      types: joi.string().required(),
+      utils: joi.string().required(),
+    }).required(),
+  }).required(),
+});
+
+const { error, value } = joi.validate(packageJson.pkg, configSchema, { allowUnknown: true });
+
+if (error) {
+  throw error;
+}
+
+const config = value.joiTsGenerator;
+const projectPath = path.dirname(packageJson.path);
+const inputPath = path.join(projectPath, config.input);
+const typesPath = path.join(projectPath, config.outputs.types);
+const utilsPath = path.join(projectPath, config.outputs.utils);
 
 // tslint:disable-next-line:no-var-requires
-const objects = require(sourcePath);
+const objects = require(inputPath);
 
 interface IDiscoverableType {
   name: string;
@@ -129,6 +152,11 @@ const schemaNameCheck = (val: IJoiSchema, name: string) => schemaCheck.test(name
 const transposeSchemaTypes = (res: ISchemae, val: IJoiSchema, key: string): ISchemae =>
   ({ ...res, [key.replace(schemaCheck, "")]: val });
 
+const relativeImportPath = (from: string, to: string) => {
+  const p = path.relative(path.dirname(from), to).replace(/\.ts$/, "");
+  return (p.charAt(0) === ".") ? p : `./${p}`;
+};
+
 const runTypeGenerator = () => {
   const exported = objects as any;
 
@@ -139,7 +167,7 @@ const runTypeGenerator = () => {
   const schemaOutput: string[] = map(schemaTypes, (schema, name) => {
     const writer = typeWriters[schema._type];
     addDiscoveredType({ name, skip: true });
-    if (!schema._notes.find(n => n === `type:${name}`)) { schema._notes.push(`type:${name}`) }
+    if (!schema._notes.find(n => n === `type:${name}`)) { schema._notes.push(`type:${name}`); }
     return writer(name, schema);
   });
 
@@ -149,10 +177,14 @@ const runTypeGenerator = () => {
 
   const coerceOutput: string[] = Object.keys(schemaTypes).map(type =>
     typeTemplate(type, factoryTypes.some(n => n === type)));
-  coerceOutput.unshift(baseTemplate());
+
+  const relativePathToInput = relativeImportPath(utilsPath, inputPath);
+  const relativePathToTypes = relativeImportPath(utilsPath, typesPath);
+
+  coerceOutput.unshift(baseTemplate(relativePathToInput, relativePathToTypes));
 
   fs.writeFileSync(typesPath, schemaOutput.join("\n\n"));
-  fs.writeFileSync(coercePath, coerceOutput.join("\n\n"));
+  fs.writeFileSync(utilsPath, coerceOutput.join("\n\n"));
 };
 
 runTypeGenerator();

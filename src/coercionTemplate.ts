@@ -1,19 +1,22 @@
+
 import { compact } from "lodash";
 
-export const baseTemplate = () =>
-`import * as joi from "joi";
-import * as t from "../types.d";
-import * as s from ".";
+export const baseTemplate = (schemasPath: string, typesPath: string) =>
+`// tslint:disable:ordered-imports
+import * as joi from "joi";
+
+import * as s from "${schemasPath}";
+import * as t from "${typesPath}";
 
 const defaultOptions: joi.ValidationOptions = {
-  convert: true,
   allowUnknown: true,
-  stripUnknown: true,
+  convert: true,
   presence: "optional",
+  stripUnknown: true,
 };
 
 export function coerceValue<T>(schema: joi.Schema) {
-  return function(object: any, options?: any): T {
+  return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: T;
     joi.validate(object, schema, resolvedOptions, (err, result) => {
@@ -21,7 +24,7 @@ export function coerceValue<T>(schema: joi.Schema) {
       coerced = result;
     });
     return coerced;
-  }
+  };
 }
 
 export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
