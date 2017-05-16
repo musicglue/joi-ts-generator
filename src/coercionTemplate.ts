@@ -4,7 +4,7 @@ import { compact } from "lodash";
 export const baseTemplate = (schemasPath: string, typesPath: string) =>
 `// tslint:disable:ordered-imports
 import * as joi from "joi";
-
+}
 import * as s from "${schemasPath}";
 import * as t from "${typesPath}";
 
@@ -30,7 +30,8 @@ export function coerceValue<T>(schema: joi.Schema) {
 export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
   return (attrs?: any, options?: any): T =>
     coerceValue<T>(schema)(factory.build(attrs, options));
-}`;
+}
+`;
 
 const coerceFactory = (name: string) =>
   `  build: coerceFactory<t.${name}>(s.${name}Factory, s.${name}Schema),`;
