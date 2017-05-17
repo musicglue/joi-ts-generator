@@ -120,7 +120,7 @@ const deriveType = (schema: any) => {
 };
 
 const resolveTypeDefinition = (node: any): string => {
-  if (typeof node === "string") { return node; }
+  if (typeof node === "string") { return ` ${node}`; }
   const baseType = node._type;
   const options = getUnion(node);
   const out: string[] = [];
@@ -130,11 +130,11 @@ const resolveTypeDefinition = (node: any): string => {
       const candidate = baseType === "string" ? `"${opt}"` : opt;
       if (out.indexOf(candidate) === -1) { out.push(candidate); }
     });
-  } else {
-    out.push(joiToTypescript(baseType));
+
+    return out.map(str => `\n  | ${str}`).join("");
   }
 
-  return out.join(" | ");
+  return ` ${joiToTypescript(baseType)}`;
 };
 
 const writeInterfaceType = (typeName: string, { _inner: { children }}: any): string =>
@@ -143,7 +143,7 @@ ${children.map((child: any) => `  ${propName(child)}: ${deriveType(child.schema)
 }`;
 
 const writeTypeAlias = (typeName: string, type: string): string =>
-  `export type ${typeName} = ${resolveTypeDefinition(type)};`;
+  `export type ${typeName} =${resolveTypeDefinition(type)};`;
 
 const typeWriters: any = {
   array: writeTypeAlias,
