@@ -2,7 +2,7 @@
 import { compact } from "lodash";
 
 export const baseTemplate = (schemasPath: string, typesPath: string) =>
-`// tslint:disable:ordered-imports
+`// tslint:disable:ordered-imports max-line-length
 import * as joi from "joi";
 
 import * as s from "${schemasPath}";
