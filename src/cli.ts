@@ -196,7 +196,7 @@ const runTypeGenerator = () => {
   const relativePathToInput = relativeImportPath(utilsPath, inputPath);
   const relativePathToTypes = relativeImportPath(utilsPath, typesPath);
 
-  coerceOutput.unshift(baseTemplate(relativePathToInput, relativePathToTypes));
+  coerceOutput.unshift(baseTemplate(useOptionTypes, relativePathToInput, relativePathToTypes));
 
   fs.writeFileSync(typesPath, `${schemaOutput.join("\n\n")}\n`);
   fs.writeFileSync(utilsPath, `${coerceOutput.join("\n\n")}\n`);
