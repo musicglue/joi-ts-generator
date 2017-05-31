@@ -25,6 +25,7 @@
     "typescript": "^2.3.2"
   },
   "dependencies": {
+    "deep-freeze-strict": "^1.1.1",
     "lodash": "^4.17.4",
     "read-pkg-up": "^2.0.0",
     "rosie": "^1.6.0"

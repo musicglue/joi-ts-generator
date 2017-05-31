@@ -2,7 +2,7 @@
 
 import fs = require("fs");
 import * as joi from "joi";
-import { find, get, has, isObject, map, mapKeys, pick, pickBy, reduce, some } from "lodash";
+import { find, get, has, identity, isObject, map, mapKeys, pick, pickBy, reduce, some } from "lodash";
 import * as path from "path";
 import { Factory } from "rosie";
 
@@ -38,6 +38,7 @@ const projectPath = path.dirname(packageJson.path);
 const inputPath = path.join(projectPath, config.input);
 const typesPath = path.join(projectPath, config.outputs.types);
 const utilsPath = path.join(projectPath, config.outputs.utils);
+const useOptionTypes = config.useOptionTypes;
 
 // tslint:disable-next-line:no-var-requires
 const objects = require(inputPath);
@@ -65,10 +66,9 @@ const addDiscoveredType = (type: IDiscoverableType) => {
 };
 
 const usableNotes = ({ _notes }: any): boolean => !!(_notes || []).find((n: any) => typeCheck.test(n));
-
+const isRequiredSchema = (schema: any) => (get(schema, "_flags.presence", "optional") as string === "required");
 const getUnion = (node: any): any[] => Array.from(get(node, "_valids._set", []));
-const propName = ({ key, schema }: any): string =>
-  (get(schema, "_flags.presence", "optional") as string === "required") ? key : `${key}?`;
+const propName = ({ key, schema }: any): string => (isRequiredSchema(schema) || useOptionTypes) ? key : `${key}?`;
 
 const joiToTypescript = (type: string) => {
   switch (type) {
@@ -105,6 +105,8 @@ const unwrapNotes = (type: string, notes: string[]): string => {
 const alternativesCheck = (schema: any): boolean => schema._type === "alternatives";
 const uuidCheck = (schema: any): boolean => !!get(schema, "_tests", []).find((t: any) => get(t, "name") === "guid");
 
+const optionTypeWrapper = (type: string) => `Option<${type}>`;
+
 const deriveType = (schema: any) => {
   if (schema._type === "array") { return unwrapArray(schema); }
   if (usableNotes(schema)) { return unwrapNotes(schema._type, schema._notes); }
@@ -139,7 +141,10 @@ const resolveTypeDefinition = (node: any): string => {
 
 const writeInterfaceType = (typeName: string, { _inner: { children }}: any): string =>
 `export interface ${typeName} {
-${children.map((child: any) => `  ${propName(child)}: ${deriveType(child.schema)};`).join("\n")}
+${children.map((child: any) => {
+  const wrap = (!isRequiredSchema(child.schema) && useOptionTypes) ? optionTypeWrapper : identity;
+  return `  ${propName(child)}: ${wrap(deriveType(child.schema))};`;
+}).join("\n")}
 }`;
 
 const writeTypeAlias = (typeName: string, type: string): string =>
@@ -181,13 +186,17 @@ const runTypeGenerator = () => {
     .filter(t => !t.skip)
     .forEach(type => schemaOutput.unshift(writeTypeAlias(type.name, type.type)));
 
+  if (useOptionTypes) {
+    schemaOutput.unshift("import { Option } from \"fp-ts/lib/Option\";");
+  }
+
   const coerceOutput: string[] = Object.keys(schemaTypes).map(type =>
     typeTemplate(type, factoryTypes.some(n => n === type)));
 
   const relativePathToInput = relativeImportPath(utilsPath, inputPath);
   const relativePathToTypes = relativeImportPath(utilsPath, typesPath);
 
-  coerceOutput.unshift(baseTemplate(relativePathToInput, relativePathToTypes));
+  coerceOutput.unshift(baseTemplate(useOptionTypes, relativePathToInput, relativePathToTypes));
 
   fs.writeFileSync(typesPath, `${schemaOutput.join("\n\n")}\n`);
   fs.writeFileSync(utilsPath, `${coerceOutput.join("\n\n")}\n`);
