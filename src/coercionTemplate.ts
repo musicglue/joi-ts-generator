@@ -2,8 +2,8 @@
 import { compact } from "lodash";
 
 const imports = (optionTypes: boolean, schemasPath: string, typesPath: string) =>
-`${optionTypes ? "import * as option from \"fp-ts/lib/Option\";" : ""}
-import * as joi from "joi";
+`import * as freeze from "deep-freeze-strict";
+${optionTypes ? "import * as option from \"fp-ts/lib/Option\";\n" : ""}import * as joi from "joi";
 ${optionTypes ? "import { get } from \"lodash\";" : ""}
 import * as s from "${schemasPath}";
 import * as t from "${typesPath}";`;
@@ -65,12 +65,14 @@ const defaultOptions: joi.ValidationOptions = {
 export function coerceValue<T>(schema: joi.Schema) {
   ${optionTypes ? "const withOptionalTypes = convertOptionalFieldsToOptionTypes<T>(schema);\n  " : ""}return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
-    let coerced: T;
+    let coerced: any;
+
     joi.validate(object, schema, resolvedOptions, (err, result) => {
       if (err) { throw err; }
       coerced = result;
     });
-    return ${optionTypes ? "withOptionalTypes(coerced)" : "coerced"};
+
+    return freeze(${optionTypes ? "withOptionalTypes(coerced)" : "coerced"}) as T;
   };
 }
 
