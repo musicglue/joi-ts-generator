@@ -1,16 +1,60 @@
 // tslint:disable:max-line-length
 import { compact } from "lodash";
 
-const imports = (optionTypes: boolean, schemasPath: string, typesPath: string) =>
-`import * as freeze from "deep-freeze-strict";
-${optionTypes ? "import * as option from \"fp-ts/lib/Option\";\n" : ""}import * as joi from "joi";
-${optionTypes ? "import { get } from \"lodash\";" : ""}
-import * as s from "${schemasPath}";
-import * as t from "${typesPath}";`;
+// string constants
 
-const optionTypeFunctions = () => `const isValueless = (obj: any) => (obj === undefined) || (obj === null);
+const cloneToPlainObject = `export const cloneToPlainObject = (obj: any) => unwrapOptions(cloneDeep(obj));`;
 
-const wrapInOption = (val: any) => {
+const coerceFactory = `export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
+  return (attrs?: any, options?: any): T =>
+    coerceValue<T>(schema)(factory.build(attrs, options));
+}`;
+
+const defaultOptions = `const defaultOptions: joi.ValidationOptions = {
+  allowUnknown: true,
+  convert: true,
+  presence: "optional",
+  stripUnknown: true,
+};`;
+
+const isValueless = `export const isValueless = (obj: any) => (obj === undefined) || (obj === null);`;
+
+const mapOptionalFieldsToOptions = `export function mapOptionalFieldsToOptions<T>(schema: joi.Schema) {
+  return (obj: any): T => wrapOptions(schema, obj);
+}`;
+
+const optionTypeImports = [
+  `import * as option from "fp-ts/lib/Option";`,
+  `import { cloneDeep, forOwn, get, isArray, isPlainObject } from "lodash";`,
+];
+
+const tslintRules = `// tslint:disable:ordered-imports max-line-length`;
+
+const unwrapOptions = `const unwrapOptions = (thing: any) => {
+  if (isValueless(thing)) {
+    return thing;
+  }
+
+  const className = thing.constructor.name;
+
+  if (className === "None" || className === "Some") {
+    return thing.toNullable();
+  }
+
+  if (isPlainObject(thing)) {
+    forOwn(thing, (v, k) => thing[k] = unwrapOptions(v));
+
+    return thing;
+  }
+
+  if (isArray(thing)) {
+    return thing.map(unwrapOptions);
+  }
+
+  return thing;
+};`;
+
+const wrapOption = `const wrapOption = (val: any) => {
   if (isValueless(val)) {
     return option.none;
   }
@@ -20,9 +64,9 @@ const wrapInOption = (val: any) => {
   }
 
   return option.some(val);
-};
+};`;
 
-const wrapOptionalField = (schema: joi.Schema, obj: any): any => {
+const wrapOptions = `const wrapOptions = (schema: joi.Schema, obj: any): any => {
   if (isValueless(obj)) {
     return obj;
   }
@@ -36,60 +80,80 @@ const wrapOptionalField = (schema: joi.Schema, obj: any): any => {
     const nested = (get(field, "schema._inner.children", []) || []).length > 0;
 
     const recursedValue = nested
-      ? wrapOptionalField(field.schema, value)
+      ? wrapOptions(field.schema, value)
       : value;
 
     const maybeValue = required
       ? recursedValue
-      : wrapInOption(recursedValue);
+      : wrapOption(recursedValue);
 
     return { ...prev, [field.key]: maybeValue };
   }, obj);
-};
+};`;
 
-export function convertOptionalFieldsToOptionTypes<T>(schema: joi.Schema) {
-  return (obj: any): T => wrapOptionalField(schema, obj);
-}`;
+// array constants
 
-export const baseTemplate = (optionTypes: boolean, schemasPath: string, typesPath: string) =>
-`// tslint:disable:ordered-imports max-line-length
-${imports(optionTypes, schemasPath, typesPath)}
+const defaultImports = [
+  `import * as freeze from "deep-freeze-strict";`,
+  `import * as joi from "joi";`,
+];
 
-const defaultOptions: joi.ValidationOptions = {
-  allowUnknown: true,
-  convert: true,
-  presence: "optional",
-  stripUnknown: true,
-};
+const optionTypeFns = [
+  cloneToPlainObject,
+  isValueless,
+  mapOptionalFieldsToOptions,
+  unwrapOptions,
+  wrapOption,
+  wrapOptions,
+];
 
-export function coerceValue<T>(schema: joi.Schema) {
-  ${optionTypes ? "const withOptionalTypes = convertOptionalFieldsToOptionTypes<T>(schema);\n  " : ""}return (object: any, options?: any): T => {
+// functions
+
+const buildCommand = (name: string) => `  build: coerceFactory<t.${name}>(s.${name}Factory, s.${name}Schema),`;
+
+const coerceCommand = (name: string) => `  coerce: coerceValue<t.${name}>(s.${name}Schema),`;
+
+const coerceValue = (optionTypes: boolean) => `export function coerceValue<T>(schema: joi.Schema) {
+  return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: any;
 
-    joi.validate(object, schema, resolvedOptions, (err, result) => {
+    joi.validate(${optionTypes ? "cloneToPlainObject(object)" : "object"}, schema, resolvedOptions, (err, result) => {
       if (err) { throw err; }
       coerced = result;
     });
 
-    return freeze(${optionTypes ? "withOptionalTypes(coerced)" : "coerced"}) as T;
+    return freeze(${optionTypes ? "mapOptionalFieldsToOptions(coerced)" : "coerced"}) as T;
   };
-}
+}`;
 
-export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
-  return (attrs?: any, options?: any): T =>
-    coerceValue<T>(schema)(factory.build(attrs, options));
-}
+const imports = (optionTypes: boolean, schemasPath: string, typesPath: string) => {
+  const dynamicImports = [
+    `import * as s from "${schemasPath}";`,
+    `import * as t from "${typesPath}";`,
+  ];
 
-${optionTypes ? optionTypeFunctions() : ""}`;
+  return defaultImports
+    .concat(optionTypes ? optionTypeImports : [])
+    .concat(dynamicImports)
+    .join(`\n`);
+};
 
-const coerceFactory = (name: string) =>
-  `  build: coerceFactory<t.${name}>(s.${name}Factory, s.${name}Schema),`;
+// exports
+
+export const baseTemplate = (optionTypes: boolean, schemasPath: string, typesPath: string) => compact([
+  tslintRules,
+  imports(optionTypes, schemasPath, typesPath),
+  defaultOptions,
+  optionTypes ? optionTypeFns.join("\n\n") : null,
+  coerceValue(optionTypes),
+  coerceFactory,
+]).join(`\n\n`);
 
 export default (name: string, hasFactory: boolean) =>
   compact([
     `export const ${name}Utils = {`,
-    hasFactory ? coerceFactory(name) : null,
-    `  coerce: coerceValue<t.${name}>(s.${name}Schema),`,
+    hasFactory ? buildCommand(name) : null,
+    coerceCommand(name),
     "};",
   ]).join("\n");
