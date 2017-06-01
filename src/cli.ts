@@ -21,6 +21,7 @@ const configSchema = joi.object().keys({
   joiTsGenerator: joi.object().keys({
     input: joi.string().required(),
     outputs: joi.object().keys({
+      library: joi.string().required(),
       types: joi.string().required(),
       utils: joi.string().required(),
     }).required(),
@@ -36,6 +37,7 @@ if (error) {
 const config = value.joiTsGenerator;
 const projectPath = path.dirname(packageJson.path);
 const inputPath = path.join(projectPath, config.input);
+const libraryPath = path.join(projectPath, config.outputs.library);
 const typesPath = path.join(projectPath, config.outputs.types);
 const utilsPath = path.join(projectPath, config.outputs.utils);
 const useOptionTypes = config.useOptionTypes;
@@ -193,11 +195,21 @@ const runTypeGenerator = () => {
   const coerceOutput: string[] = Object.keys(schemaTypes).map(type =>
     typeTemplate(type, factoryTypes.some(n => n === type)));
 
+  const relativePathToLibrary = relativeImportPath(utilsPath, libraryPath);
   const relativePathToInput = relativeImportPath(utilsPath, inputPath);
   const relativePathToTypes = relativeImportPath(utilsPath, typesPath);
 
-  coerceOutput.unshift(baseTemplate(useOptionTypes, relativePathToInput, relativePathToTypes));
+  coerceOutput.unshift(
+    baseTemplate(
+      useOptionTypes,
+      relativePathToLibrary,
+      relativePathToInput,
+      relativePathToTypes));
 
+  const fnsFile = useOptionTypes ? "optionTypeFns.ts" : "standardFns.ts";
+  const fnsContent = fs.readFileSync(path.resolve(__dirname, "templates", fnsFile), "UTF-8");
+
+  fs.writeFileSync(libraryPath, fnsContent);
   fs.writeFileSync(typesPath, `${schemaOutput.join("\n\n")}\n`);
   fs.writeFileSync(utilsPath, `${coerceOutput.join("\n\n")}\n`);
 };

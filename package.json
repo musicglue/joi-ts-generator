@@ -10,7 +10,9 @@
   "author": "Music Glue",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
+    "clean": "rm -rf dist",
+    "copy-templates": "cp -R src/templates dist",
+    "build": "npm run clean && tsc && npm run copy-templates",
     "make-executable": "chmod +x dist/cli.js",
     "prepublish": "npm run build; npm run make-executable"
   },
@@ -26,6 +28,7 @@
   },
   "dependencies": {
     "deep-freeze-strict": "^1.1.1",
+    "fp-ts": "^0.2.9",
     "lodash": "^4.17.4",
     "read-pkg-up": "^2.0.0",
     "rosie": "^1.6.0"
