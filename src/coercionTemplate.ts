@@ -42,7 +42,7 @@ const unwrapOptions = `const unwrapOptions = (thing: any) => {
   }
 
   if (className === "Some") {
-    return thing.toNullable();
+    return unwrapOptions(thing.toNullable());
   }
 
   if (isPlainObject(thing)) {
