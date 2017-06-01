@@ -37,7 +37,11 @@ const unwrapOptions = `const unwrapOptions = (thing: any) => {
 
   const className = thing.constructor.name;
 
-  if (className === "None" || className === "Some") {
+  if (className === "None") {
+    return undefined;
+  }
+
+  if (className === "Some") {
     return thing.toNullable();
   }
 
