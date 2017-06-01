@@ -123,7 +123,7 @@ const coerceValue = (optionTypes: boolean) => `export function coerceValue<T>(sc
       coerced = result;
     });
 
-    return freeze(${optionTypes ? "mapOptionalFieldsToOptions(coerced)" : "coerced"}) as T;
+    return freeze(${optionTypes ? "wrapOptions(schema, coerced)" : "coerced"}) as T;
   };
 }`;
 
