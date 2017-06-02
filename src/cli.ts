@@ -202,6 +202,7 @@ const runTypeGenerator = () => {
   coerceOutput.unshift(
     baseTemplate(
       useOptionTypes,
+      !!factoryTypes.length,
       relativePathToLibrary,
       relativePathToInput,
       relativePathToTypes));
