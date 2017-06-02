@@ -15,7 +15,6 @@ const imports = (optionTypes: boolean, libraryPath: string, schemasPath: string,
 export const baseTemplate = (optionTypes: boolean, libraryPath: string, schemasPath: string, typesPath: string) => compact([
   `// tslint:disable:ordered-imports max-line-length`,
   imports(optionTypes, libraryPath, schemasPath, typesPath),
-  `export * from "${libraryPath}";`,
 ]).join(`\n\n`);
 
 export default (name: string, hasFactory: boolean) =>
