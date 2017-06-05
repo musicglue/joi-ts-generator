@@ -24,7 +24,7 @@ const defaultOptions: joi.ValidationOptions = {
   allowUnknown: true,
   convert: true,
   presence: "optional",
-  stripUnknown: true,
+  stripUnknown: { objects: true },
 };
 
 const maybeWrap = (node: any, value: any) =>

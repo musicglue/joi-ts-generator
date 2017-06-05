@@ -9,7 +9,7 @@ const defaultOptions: joi.ValidationOptions = {
   allowUnknown: true,
   convert: true,
   presence: "optional",
-  stripUnknown: true,
+  stripUnknown: { objects: true },
 };
 
 export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
