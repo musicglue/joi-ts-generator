@@ -1,14 +1,14 @@
 {
   "compilerOptions": {
-    "target": "es2015",
     "module": "commonjs",
     "moduleResolution": "node",
+    "noImplicitAny": true,
     "outDir": "dist",
     "removeComments": true,
-    "noImplicitAny": true
+    "target": "es2017"
   },
   "include": [
-    "src/*.ts",
+    "src/**/*.ts",
     "node_modules/@types/**/*.ts"
   ],
   "exclude": [
