@@ -11,29 +11,45 @@
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf dist",
-    "copy-templates": "cp -R src/templates dist",
+    "copy-templates": "npm run purge-templates && cp -R src/writers/templates dist/writers",
+    "prepare-templates-dir": "mkdir -p dist/writers/templates",
+    "purge-templates": "npm run prepare-templates-dir && rm -rf dist/writers/templates",
     "build": "npm run clean && tsc && npm run copy-templates",
     "make-executable": "chmod +x dist/cli.js",
+    "prettify": "prettier --write --parser typescript --trailing-comma all --list-different ./src/**/*.ts",
     "prepublish": "npm run build; npm run make-executable"
   },
   "devDependencies": {
+    "@types/jest": "^19.2.4",
     "@types/joi": "^10.4.0",
-    "@types/lodash": "^4.14.64",
-    "@types/node": "^7.0.23",
+    "@types/lodash": "^4.14.65",
+    "@types/node": "^7.0.28",
     "@types/rosie": "^0.0.30",
+    "jest": "^20.0.4",
     "joi": "^10.5.2",
-    "ts-node": "^3.0.4",
+    "prettier": "^1.4.4",
+    "ts-jest": "^20.0.5",
+    "ts-node": "^3.0.5",
     "tslint": "^5.4.2",
     "typescript": "^2.3.4"
   },
   "dependencies": {
     "deep-freeze-strict": "^1.1.1",
-    "fp-ts": "^0.3.0",
+    "fp-ts": "^0.3.1",
     "lodash": "^4.17.4",
     "read-pkg-up": "^2.0.0",
     "rosie": "^1.6.0"
   },
-  "peerDependencies": {
-    "ts-node": "^3.0.4"
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ],
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "test/.*\\.(test)\\.(ts|tsx)"
   }
 }
