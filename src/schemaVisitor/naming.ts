@@ -1,3 +1,5 @@
+import { isString } from "lodash";
+
 import {
   isBasic,
   isInterface,
@@ -14,6 +16,10 @@ export const nameFromNotes = (schema: Schema): string =>
     .map(note => note.replace(typeNotePrefix, ""))[0];
 
 export const toTypeName = (type: VisitedType): string => {
+  if (isString(type.name)) {
+    return type.name;
+  }
+
   if (isBasic(type.class)) {
     return type.class.type;
   }

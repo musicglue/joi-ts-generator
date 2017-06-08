@@ -269,6 +269,38 @@ describe("a schema describing an object with a single array field of a basic typ
   });
 });
 
+describe("a schema describing an object with a single array field of an alias type", () => {
+  test("it is discovered as an interface", () => {
+    const schema = joi.object().keys({
+      uuidOptions: joi.array().items(joi.string().guid().required()).required(),
+    });
+
+    const types = visit([], discoverTypes({ UuidOptionsSchema: schema }).schemas);
+
+    expect(types).toHaveLength(1);
+
+    const type = types[0];
+
+    if (!isInterface(type.class)) {
+      return fail();
+    }
+
+    expect(type.name).toEqual("UuidOptions");
+    expect(type.class.fields).toHaveLength(1);
+    expect(type.class.fields[0].key).toEqual("uuidOptions");
+    expect(type.class.fields[0].required).toEqual(true);
+
+    const fieldType = type.class.fields[0].type;
+
+    if (!isArray(fieldType.class)) {
+      return fail();
+    }
+
+    expect(fieldType.class.kind).toEqual("array");
+    expect(fieldType.class.elements).toEqual(["Uuid"]);
+  });
+});
+
 describe("a schema describing an object with a single array field of heterogenous basic types", () => {
   test("it is discovered as an interface", () => {
     const schema = joi.object().keys({
