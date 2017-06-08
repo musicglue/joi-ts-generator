@@ -16,6 +16,7 @@
     "purge-templates": "npm run prepare-templates-dir && rm -rf dist/writers/templates",
     "build": "npm run clean && tsc && npm run copy-templates",
     "make-executable": "chmod +x dist/cli.js",
+    "prettify": "prettier --write --parser typescript --trailing-comma all --list-different ./src/**/*.ts",
     "prepublish": "npm run build; npm run make-executable"
   },
   "devDependencies": {
@@ -26,6 +27,7 @@
     "@types/rosie": "^0.0.30",
     "jest": "^20.0.4",
     "joi": "^10.5.2",
+    "prettier": "^1.4.4",
     "ts-jest": "^20.0.5",
     "ts-node": "^3.0.5",
     "tslint": "^5.4.2",

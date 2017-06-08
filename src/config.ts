@@ -5,16 +5,22 @@ import * as path from "path";
 const readPkgUp = require("read-pkg-up");
 
 const configSchema = joi.object().keys({
-  joiTsGenerator: joi.object().keys({
-    input: joi.string().required(),
-    nullableMode: joi.string().valid("nullable", "option").required(),
-    outputs: joi.object().keys({
-      library: joi.string().required(),
-      optics: joi.string(),
-      types: joi.string().required(),
-      utils: joi.string().required(),
-    }).required(),
-  }).required(),
+  joiTsGenerator: joi
+    .object()
+    .keys({
+      input: joi.string().required(),
+      nullableMode: joi.string().valid("nullable", "option").required(),
+      outputs: joi
+        .object()
+        .keys({
+          library: joi.string().required(),
+          optics: joi.string(),
+          types: joi.string().required(),
+          utils: joi.string().required(),
+        })
+        .required(),
+    })
+    .required(),
 });
 
 interface Paths {
@@ -26,9 +32,7 @@ interface Paths {
   utils: string;
 }
 
-type NullableMode =
-  | "nullable"
-  | "option";
+type NullableMode = "nullable" | "option";
 
 export interface Config {
   nullableMode: NullableMode;
@@ -42,10 +46,9 @@ const readConfig = (): Config => {
     throw new Error(`Could not find package.json in: ${process.cwd()}`);
   }
 
-  const { error, value } = joi.validate(
-    packageJson.pkg,
-    configSchema,
-    { allowUnknown: true });
+  const { error, value } = joi.validate(packageJson.pkg, configSchema, {
+    allowUnknown: true,
+  });
 
   if (error) {
     throw error;

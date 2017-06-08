@@ -1,7 +1,4 @@
-import {
-  none,
-  some,
-} from "fp-ts/lib/Option";
+import { none, some } from "fp-ts/lib/Option";
 
 import { nameFromNotes } from "./naming";
 import { isRequired } from "./predicates";
@@ -36,11 +33,14 @@ export const visitObject: Visitor = visitSchema => schema => {
     return some(type);
   }
 
-  const fields: Field[] = children.map(child => ({
-    key: child.key,
-    required: isRequired(child.schema),
-    type: visitSchema(child.schema),
-  } as Field));
+  const fields: Field[] = children.map(
+    child =>
+      ({
+        key: child.key,
+        required: isRequired(child.schema),
+        type: visitSchema(child.schema),
+      } as Field),
+  );
 
   const iface: InterfaceType = {
     fields,

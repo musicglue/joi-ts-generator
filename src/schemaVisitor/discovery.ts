@@ -15,7 +15,8 @@ import { Schema } from "./types";
 
 const schemaSuffix = /Schema$/;
 const isSchema = (_: any, name: string) => schemaSuffix.test(name);
-const hasFactory = (exports: {}) => (name: string) => has(exports, `${name}Factory`);
+const hasFactory = (exports: {}) => (name: string) =>
+  has(exports, `${name}Factory`);
 
 type Mutator = (kv: Schema) => Schema;
 
@@ -37,15 +38,12 @@ const ensureNoteExists: Mutator = schema => {
 export const discoverTypes = (exported: {}) => {
   const schemaExports = pickBy(exported, isSchema);
 
-  const schemas: Schema[] =
-    toPairs(schemaExports)
-      .map(pairToSchema)
-      .map(stripSchemaSuffix)
-      .map(ensureNoteExists);
+  const schemas: Schema[] = toPairs(schemaExports)
+    .map(pairToSchema)
+    .map(stripSchemaSuffix)
+    .map(ensureNoteExists);
 
-  const factories = Object
-    .keys(schemas)
-    .filter(hasFactory(exported));
+  const factories = Object.keys(schemas).filter(hasFactory(exported));
 
   return {
     exported: keys(exported),

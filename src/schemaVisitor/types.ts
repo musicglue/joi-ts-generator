@@ -8,11 +8,7 @@ export interface Field {
   required: boolean;
 }
 
-export type BasicTypeNames =
-  | "boolean"
-  | "number"
-  | "object"
-  | "string";
+export type BasicTypeNames = "boolean" | "number" | "object" | "string";
 
 export interface ArrayType {
   kind: "array";
@@ -86,4 +82,6 @@ export interface Schema extends joi.Schema {
 }
 
 export type SchemaVisitor = (schema: Schema) => VisitedType;
-export type Visitor = (visitSchema: SchemaVisitor) => (schema: Schema) => Option<VisitedType>;
+export type Visitor = (
+  visitSchema: SchemaVisitor,
+) => (schema: Schema) => Option<VisitedType>;

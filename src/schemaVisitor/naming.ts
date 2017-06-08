@@ -5,16 +5,12 @@ import {
   isStringUnion,
 } from "./predicates";
 
-import {
-  Schema,
-  VisitedType,
-} from "./types";
+import { Schema, VisitedType } from "./types";
 
 const typeNotePrefix = /^type:/;
 
 export const nameFromNotes = (schema: Schema): string =>
-  schema
-    ._notes
+  schema._notes
     .filter(note => typeNotePrefix.test(note))
     .map(note => note.replace(typeNotePrefix, ""))[0];
 

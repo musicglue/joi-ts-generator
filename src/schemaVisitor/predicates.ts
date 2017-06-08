@@ -20,11 +20,15 @@ export function isInterface(klass: VisitedTypeClass): klass is InterfaceType {
   return klass.kind === "interface";
 }
 
-export function isStringAlias(klass: VisitedTypeClass): klass is StringAliasType {
+export function isStringAlias(
+  klass: VisitedTypeClass,
+): klass is StringAliasType {
   return klass.kind === "string-alias";
 }
 
-export function isStringUnion(klass: VisitedTypeClass): klass is StringUnionType {
+export function isStringUnion(
+  klass: VisitedTypeClass,
+): klass is StringUnionType {
   return klass.kind === "string-union";
 }
 

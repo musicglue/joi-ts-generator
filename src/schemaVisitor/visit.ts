@@ -1,6 +1,11 @@
 import { flatMap, flatten, isString, sortBy, uniqBy } from "lodash";
 import { discoverTypes } from "./discovery";
-import { isArray, isInterface, isStringAlias, isStringUnion } from "./predicates";
+import {
+  isArray,
+  isInterface,
+  isStringAlias,
+  isStringUnion,
+} from "./predicates";
 import { InterfaceType, Schema, VisitedType, Visitor } from "./types";
 import { visitArray } from "./visitArray";
 import { visitBoolean } from "./visitBoolean";
@@ -29,10 +34,14 @@ const visitSchema = buildVisitSchema(visitors);
 const visitSchemas = (schemas: Schema[]) =>
   schemas.reduce(
     (types, schema) => types.concat([visitSchema(schema)]),
-    [] as VisitedType[]);
+    [] as VisitedType[],
+  );
 
-const hoistNestedTypes = (state: VisitedType[], types: VisitedType[]): VisitedType[] => {
-  const interfaces =  types
+const hoistNestedTypes = (
+  state: VisitedType[],
+  types: VisitedType[],
+): VisitedType[] => {
+  const interfaces = types
     .map(type => type.class)
     .filter(isInterface)
     .map(klass => klass as InterfaceType);

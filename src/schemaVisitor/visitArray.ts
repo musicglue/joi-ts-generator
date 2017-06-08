@@ -1,28 +1,15 @@
-import {
-  none,
-  some,
-} from "fp-ts/lib/Option";
+import { none, some } from "fp-ts/lib/Option";
 
-import {
-  nameFromNotes,
-  toTypeName,
-} from "./naming";
+import { nameFromNotes, toTypeName } from "./naming";
 
-import {
-  ArrayType,
-  VisitedType,
-  VisitedTypeClass,
-  Visitor,
-} from "./types";
+import { ArrayType, VisitedType, VisitedTypeClass, Visitor } from "./types";
 
 export const visitArray: Visitor = visitSchema => schema => {
   if (schema._type !== "array") {
     return none;
   }
 
-  const elements: string[] = schema
-    ._inner
-    .items
+  const elements: string[] = schema._inner.items
     .map(visitSchema)
     .map(toTypeName);
 

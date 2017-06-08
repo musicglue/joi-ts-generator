@@ -23,7 +23,7 @@ const fieldToString = (field: Field): string => {
   if (isArray(field.type.class)) {
     const { elements } = field.type.class;
 
-    return (elements.length > 1)
+    return elements.length > 1
       ? `Array<${elements.join(" | ")}>`
       : `${elements[0]}[]`;
   }
@@ -37,13 +37,19 @@ const fieldToString = (field: Field): string => {
 
 const interfaceToString = (config: Config, type: VisitedType): string => {
   const iface = type.class as InterfaceType;
-  const fields = iface.fields.map(field => {
-    const key = (config.nullableMode === "option" || field.required) ? field.key : `${field.key}?`;
-    const fieldType = fieldToString(field);
-    const maybeFieldType = (config.nullableMode === "option" && !field.required) ? `Option<${fieldType}>` : fieldType;
+  const fields = iface.fields
+    .map(field => {
+      const key = config.nullableMode === "option" || field.required
+        ? field.key
+        : `${field.key}?`;
+      const fieldType = fieldToString(field);
+      const maybeFieldType = config.nullableMode === "option" && !field.required
+        ? `Option<${fieldType}>`
+        : fieldType;
 
-    return `  ${key}: ${maybeFieldType};`;
-  }).join(`\n`);
+      return `  ${key}: ${maybeFieldType};`;
+    })
+    .join(`\n`);
 
   return `export interface ${type.name} {
 ${fields}
@@ -83,7 +89,7 @@ const typeToString = (config: Config) => (type: VisitedType): string => {
 
 const relativeImportPath = (from: string, to: string) => {
   const p = path.relative(path.dirname(from), to).replace(/\.ts$/, "");
-  return (p.charAt(0) === ".") ? p : `./${p}`;
+  return p.charAt(0) === "." ? p : `./${p}`;
 };
 
 export const buildTypeContent = (config: Config, types: VisitedType[]) => {

@@ -2,7 +2,19 @@
 
 import fs = require("fs");
 import * as joi from "joi";
-import { find, get, has, identity, isObject, map, mapKeys, pick, pickBy, reduce, some } from "lodash";
+import {
+  find,
+  get,
+  has,
+  identity,
+  isObject,
+  map,
+  mapKeys,
+  pick,
+  pickBy,
+  reduce,
+  some,
+} from "lodash";
 import * as path from "path";
 import { Factory } from "rosie";
 
@@ -14,9 +26,14 @@ import { buildTypeContent } from "./writers/types";
 import { buildUtilsContent } from "./writers/utils";
 
 const config = readConfig();
-const { exported, factories, schemas } = discoverTypesFromPath(config.paths.input);
+const { exported, factories, schemas } = discoverTypesFromPath(
+  config.paths.input,
+);
 const types = visit(schemas);
 
 fs.writeFileSync(config.paths.library, buildLibraryContent(config));
 fs.writeFileSync(config.paths.types, buildTypeContent(config, types));
-fs.writeFileSync(config.paths.utils, buildUtilsContent(config, exported, factories, types));
+fs.writeFileSync(
+  config.paths.utils,
+  buildUtilsContent(config, exported, factories, types),
+);

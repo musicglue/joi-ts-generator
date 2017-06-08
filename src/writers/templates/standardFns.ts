@@ -11,7 +11,10 @@ const defaultOptions: joi.ValidationOptions = {
   stripUnknown: { objects: true },
 };
 
-export function coerceFactory<T>(factory: Factory.IFactory, schema: joi.Schema) {
+export function coerceFactory<T>(
+  factory: Factory.IFactory,
+  schema: joi.Schema,
+) {
   return (attrs?: any, options?: any): T =>
     coerceValue<T>(schema)(factory.build(attrs, options));
 }
@@ -22,7 +25,9 @@ export function coerceValue<T>(schema: joi.Schema) {
     let coerced: any;
 
     joi.validate(object, schema, resolvedOptions, (err, result) => {
-      if (err) { throw err; }
+      if (err) {
+        throw err;
+      }
       coerced = result;
     });
 

@@ -1,15 +1,8 @@
-import {
-  none,
-  some,
-} from "fp-ts/lib/Option";
+import { none, some } from "fp-ts/lib/Option";
 
 import { nameFromNotes } from "./naming";
 
-import {
-  StringAliasType,
-  VisitedType,
-  Visitor,
-} from "./types";
+import { StringAliasType, VisitedType, Visitor } from "./types";
 
 export const visitDate: Visitor = visitSchema => schema => {
   if (schema._type !== "date") {
