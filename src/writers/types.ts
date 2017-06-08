@@ -33,6 +33,10 @@ const fieldToString = (field: Field): string => {
       : `${elements[0]}[]`;
   }
 
+  if (field.type.name) {
+    return field.type.name;
+  }
+
   if (isBasic(field.type.class)) {
     return basicToFieldType(field.type.class);
   }
