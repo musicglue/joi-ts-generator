@@ -59,7 +59,7 @@ const readConfig = (): Config => {
 
   const coerced = value.joiTsGenerator;
   const projectPath = path.dirname(packageJson.path);
-  const makePath = (p: string) => p.toString().length > 0 ? path.join(projectPath, p) : null;
+  const makePath = (p: string) => (p || "").toString().length > 0 ? path.join(projectPath, p) : null;
 
   const config: Config = {
     nullableMode: coerced.nullableMode,
