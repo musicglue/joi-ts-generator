@@ -1,7 +1,5 @@
 import { none, some } from "fp-ts/lib/Option";
-
 import { nameFromNotes, toTypeName } from "./naming";
-
 import { ArrayType, VisitedType, VisitedTypeClass, Visitor } from "./types";
 
 export const visitArray: Visitor = visitSchema => schema => {

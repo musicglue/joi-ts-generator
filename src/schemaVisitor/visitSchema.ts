@@ -1,7 +1,5 @@
 import { empty } from "fp-ts/lib/Option";
-
 import { Schema, VisitedType, Visitor } from "./types";
-
 import { visitUnknown } from "./visitUnknown";
 
 export const buildVisitSchema = (visitors: Visitor[]) => {

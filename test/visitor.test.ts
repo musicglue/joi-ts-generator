@@ -7,7 +7,6 @@ import {
   isArray,
   isBasic,
   isInterface,
-  isStringAlias,
   isStringUnion,
 } from "../src/schemaVisitor/predicates";
 
@@ -210,7 +209,7 @@ describe("a schema describing an object with a single required guid field", () =
 
     const aliasType = types[0];
 
-    if (!isStringAlias(aliasType.class)) {
+    if (!isBasic(aliasType.class)) {
       return fail();
     }
 
@@ -229,12 +228,12 @@ describe("a schema describing an object with a single required guid field", () =
 
     const fieldType0 = interfaceType.class.fields[0].type;
 
-    if (!isStringAlias(fieldType0.class)) {
+    if (!isBasic(fieldType0.class)) {
       return fail();
     }
 
-    expect(fieldType0.class.kind).toEqual("string-alias");
-    expect(fieldType0.class.name).toEqual("Uuid");
+    expect(fieldType0.class.kind).toEqual("basic");
+    expect(fieldType0.class.type).toEqual("string");
   });
 });
 
@@ -380,7 +379,7 @@ describe("a schema describing an object with all the non-interface types", () =>
 
     const uuidType = types[0];
 
-    if (!isStringAlias(uuidType.class)) {
+    if (!isBasic(uuidType.class)) {
       fail();
     }
 
@@ -430,7 +429,7 @@ describe("a schema describing an object with all the non-interface types", () =>
 
     expect(field1.type.class.type).toEqual("date");
 
-    if (!isStringAlias(field2.type.class)) {
+    if (!isBasic(field2.type.class)) {
       return fail();
     }
 

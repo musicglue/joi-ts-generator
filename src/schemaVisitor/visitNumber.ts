@@ -1,7 +1,5 @@
 import { none, some } from "fp-ts/lib/Option";
-
 import { nameFromNotes } from "./naming";
-
 import { BasicType, VisitedType, Visitor } from "./types";
 
 export const visitNumber: Visitor = visitSchema => schema => {

@@ -2,8 +2,8 @@ import { flatMap, flatten, isString, sortBy, uniqBy } from "lodash";
 import { discoverTypes } from "./discovery";
 import {
   isArray,
+  isBasic,
   isInterface,
-  isStringAlias,
   isStringUnion,
 } from "./predicates";
 import { InterfaceType, Schema, VisitedType, Visitor } from "./types";
@@ -69,7 +69,7 @@ const hoistNestedTypes = (
 
 const sortTypes = (types: VisitedType[]): VisitedType[] => {
   return sortBy(types, type => {
-    if (isStringAlias(type.class)) {
+    if (isBasic(type.class)) {
       return 0;
     }
 

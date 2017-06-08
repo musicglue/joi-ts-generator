@@ -1,5 +1,4 @@
 import { none, some } from "fp-ts/lib/Option";
-
 import { nameFromNotes } from "./naming";
 import { isRequired } from "./predicates";
 

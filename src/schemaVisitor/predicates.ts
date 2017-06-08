@@ -3,7 +3,6 @@ import {
   BasicType,
   InterfaceType,
   Schema,
-  StringAliasType,
   StringUnionType,
   VisitedTypeClass,
 } from "./types";
@@ -18,12 +17,6 @@ export function isBasic(klass: VisitedTypeClass): klass is BasicType {
 
 export function isInterface(klass: VisitedTypeClass): klass is InterfaceType {
   return klass.kind === "interface";
-}
-
-export function isStringAlias(
-  klass: VisitedTypeClass,
-): klass is StringAliasType {
-  return klass.kind === "string-alias";
 }
 
 export function isStringUnion(

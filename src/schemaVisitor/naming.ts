@@ -1,7 +1,6 @@
 import {
   isBasic,
   isInterface,
-  isStringAlias,
   isStringUnion,
 } from "./predicates";
 
@@ -21,10 +20,6 @@ export const toTypeName = (type: VisitedType): string => {
 
   if (isInterface(type.class)) {
     return type.name;
-  }
-
-  if (isStringAlias(type.class)) {
-    return type.class.name;
   }
 
   if (isStringUnion(type.class)) {

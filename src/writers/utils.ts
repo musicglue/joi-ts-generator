@@ -1,7 +1,6 @@
 import { compact, sortBy } from "lodash";
 import * as path from "path";
 import { Config } from "../config";
-import { isStringAlias } from "../schemaVisitor/predicates";
 import { VisitedType } from "../schemaVisitor/types";
 import { headers } from "./shared";
 

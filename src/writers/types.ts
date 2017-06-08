@@ -5,7 +5,6 @@ import {
   isArray,
   isBasic,
   isInterface,
-  isStringAlias,
   isStringUnion,
 } from "../schemaVisitor/predicates";
 import {
@@ -63,11 +62,6 @@ ${fields}
 `;
 };
 
-const stringAliasToString = (type: VisitedType): string => {
-  return `export type ${type.name} = string;
-`;
-};
-
 const stringUnionToString = (type: VisitedType): string => {
   const union = type.class as StringUnionType;
   const alternatives = union.alternatives.map(alt => `  | "${alt}"`).join(`\n`);
@@ -84,10 +78,6 @@ const typeToString = (config: Config) => (type: VisitedType): string => {
 
   if (isInterface(type.class)) {
     return interfaceToString(config, type);
-  }
-
-  if (isStringAlias(type.class)) {
-    return stringAliasToString(type);
   }
 
   if (isStringUnion(type.class)) {

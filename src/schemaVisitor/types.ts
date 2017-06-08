@@ -30,11 +30,6 @@ export interface StringUnionType {
   alternatives: string[];
 }
 
-export interface StringAliasType {
-  kind: "string-alias";
-  name: string;
-}
-
 export interface UnknownType {
   kind: "unknown";
 }
@@ -43,7 +38,6 @@ export type VisitedTypeClass =
   | ArrayType
   | BasicType
   | InterfaceType
-  | StringAliasType
   | StringUnionType
   | UnknownType;
 

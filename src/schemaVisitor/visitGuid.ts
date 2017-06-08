@@ -1,10 +1,7 @@
 import { none, some } from "fp-ts/lib/Option";
-
-import { isGuid } from "./predicates";
-
 import { nameFromNotes } from "./naming";
-
-import { StringAliasType, VisitedType, Visitor } from "./types";
+import { isGuid } from "./predicates";
+import { BasicType, VisitedType, Visitor } from "./types";
 
 export const visitGuid: Visitor = visitSchema => schema => {
   if (schema._type !== "string") {
@@ -15,13 +12,13 @@ export const visitGuid: Visitor = visitSchema => schema => {
     return none;
   }
 
-  const stringAliasType: StringAliasType = {
-    kind: "string-alias",
-    name: "Uuid",
+  const basicType: BasicType = {
+    kind: "basic",
+    type: "string",
   };
 
   const type: VisitedType = {
-    class: stringAliasType,
+    class: basicType,
     name: "Uuid",
   };
 
