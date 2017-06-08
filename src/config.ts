@@ -1,3 +1,4 @@
+import fs = require("fs");
 import * as joi from "joi";
 import * as path from "path";
 
@@ -72,6 +73,19 @@ const readConfig = (): Config => {
     },
     typeImports: coerced.typeImports || {},
   };
+
+  if (config.paths.optics) {
+    config.paths.optics = path.resolve(projectPath, config.paths.optics);
+    const stats = fs.statSync(config.paths.optics);
+
+    if (!stats.isDirectory()) {
+      throw new Error(`Optics path specified, but path does not exist or is not a directory: ${config.paths.optics}`);
+    }
+
+    if (config.nullableMode !== "option") {
+      throw new Error("Optics paths is only valid if nullableMode is 'option'");
+    }
+  }
 
   return config;
 };

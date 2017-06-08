@@ -3,27 +3,15 @@
 import fs = require("fs");
 import * as joi from "joi";
 import {
-  find,
-  get,
-  has,
-  identity,
-  isObject,
   keys,
-  map,
-  mapKeys,
-  pick,
-  pickBy,
-  reduce,
-  some,
 } from "lodash";
 import * as path from "path";
 import { Factory } from "rosie";
-
 import readConfig from "./config";
 import { discoverTypesFromPath } from "./schemaVisitor/discovery";
 import { visit } from "./schemaVisitor/visit";
 import { buildLibraryContent } from "./writers/library";
-import { buildOpticsContent } from "./writers/optics";
+import { writeOpticsContent } from "./writers/optics";
 import { buildTypeContent } from "./writers/types";
 import { buildUtilsContent } from "./writers/utils";
 
@@ -42,5 +30,5 @@ fs.writeFileSync(
 );
 
 if (config.paths.optics) {
-  fs.writeFileSync(config.paths.optics, buildOpticsContent(config, types));
+  writeOpticsContent(config, types);
 }

@@ -8,6 +8,7 @@ import {
   isStringUnion,
 } from "../schemaVisitor/predicates";
 import {
+  ArrayType,
   BasicType,
   Field,
   InterfaceType,
@@ -16,7 +17,15 @@ import {
 } from "../schemaVisitor/types";
 import { headers } from "./shared";
 
-const basicToFieldType = (type: BasicType): string =>
+export const arrayToFieldType = (type: ArrayType): string => {
+  const { elements } = type;
+
+  return elements.length > 1
+    ? `Array<${elements.join(" | ")}>`
+    : `${elements[0]}[]`;
+};
+
+export const basicToFieldType = (type: BasicType): string =>
   type.type === "date" ? "Date" : type.type;
 
 const basicToString = (type: VisitedType): string => {
@@ -26,11 +35,7 @@ const basicToString = (type: VisitedType): string => {
 
 const fieldToString = (field: Field): string => {
   if (isArray(field.type.class)) {
-    const { elements } = field.type.class;
-
-    return elements.length > 1
-      ? `Array<${elements.join(" | ")}>`
-      : `${elements[0]}[]`;
+    return arrayToFieldType(field.type.class);
   }
 
   if (field.type.name) {
