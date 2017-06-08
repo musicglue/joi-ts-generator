@@ -19,6 +19,7 @@ const configSchema = joi.object().keys({
           utils: joi.string().required(),
         })
         .required(),
+      typeImports: joi.object(),
     })
     .required(),
 });
@@ -37,6 +38,7 @@ type NullableMode = "nullable" | "option";
 export interface Config {
   nullableMode: NullableMode;
   paths: Paths;
+  typeImports: object;
 }
 
 const readConfig = (): Config => {
@@ -68,6 +70,7 @@ const readConfig = (): Config => {
       types: makePath(coerced.outputs.types),
       utils: makePath(coerced.outputs.utils),
     },
+    typeImports: coerced.typeImports || {},
   };
 
   return config;

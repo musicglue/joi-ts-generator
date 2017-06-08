@@ -14,7 +14,7 @@ import {
 describe("a schema that has no Schema suffix", () => {
   test("it is not discovered", () => {
     const schema = joi.string().uppercase().valid(["apple", "orange"]);
-    const types = visit(discoverTypes({ Foo: schema }).schemas);
+    const types = visit([], discoverTypes({ Foo: schema }).schemas);
 
     expect(types).toHaveLength(0);
   });
@@ -23,7 +23,7 @@ describe("a schema that has no Schema suffix", () => {
 describe("a schema describing a string union", () => {
   test("it is discovered as a string union", () => {
     const schema = joi.string().uppercase().valid(["apple", "orange"]);
-    const types = visit(discoverTypes({ FruitSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ FruitSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -44,7 +44,7 @@ describe("a schema describing an object with a single optional string field", ()
       title: joi.string(),
     });
 
-    const types = visit(discoverTypes({ BookSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ BookSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -76,7 +76,7 @@ describe("a schema describing an object with a single required string field", ()
       title: joi.string().required(),
     });
 
-    const types = visit(discoverTypes({ BookSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ BookSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -108,7 +108,7 @@ describe("a schema describing an object with a single optional number field", ()
       age: joi.number(),
     });
 
-    const types = visit(discoverTypes({ DemographicSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ DemographicSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -140,7 +140,7 @@ describe("a schema describing an object with a single required boolean field", (
       accepted: joi.boolean().required(),
     });
 
-    const types = visit(discoverTypes({ FormAcceptanceSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ FormAcceptanceSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -172,7 +172,7 @@ describe("a schema describing an object with a single required date field", () =
       timestamp: joi.date().required(),
     });
 
-    const types = visit(discoverTypes({ EventSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ EventSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -204,7 +204,7 @@ describe("a schema describing an object with a single required guid field", () =
       id: joi.string().guid().required(),
     });
 
-    const types = visit(discoverTypes({ UniqueSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ UniqueSchema: schema }).schemas);
 
     expect(types).toHaveLength(2);
 
@@ -244,7 +244,7 @@ describe("a schema describing an object with a single array field of a basic typ
       numberOptions: joi.array().items(joi.number().required()),
     });
 
-    const types = visit(discoverTypes({ NumberOptionsSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ NumberOptionsSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -278,7 +278,7 @@ describe("a schema describing an object with a single array field of heterogenou
         joi.boolean()),
     });
 
-    const types = visit(discoverTypes({ BasicOptionsSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ BasicOptionsSchema: schema }).schemas);
 
     expect(types).toHaveLength(1);
 
@@ -320,7 +320,7 @@ describe("a schema describing an object with a single array field of heterogenou
         joi.boolean()),
     });
 
-    const types = visit(discoverTypes({
+    const types = visit([], discoverTypes({
       InterfaceSchema: interfaceSchema,
       OptionsSchema: optionsSchema,
       StringUnionSchema: stringUnionSchema,
@@ -374,7 +374,7 @@ describe("a schema describing an object with all the non-interface types", () =>
       whitelist: joi.string().valid("abc", "xyz"),
     });
 
-    const types = visit(discoverTypes({ SimpleTypesSchema: schema }).schemas);
+    const types = visit([], discoverTypes({ SimpleTypesSchema: schema }).schemas);
 
     expect(types).toHaveLength(2);
 
@@ -473,7 +473,7 @@ describe("a schema describing a relationship between two interface schemas", () 
       name: joi.string().required(),
     });
 
-    const types = visit(discoverTypes({
+    const types = visit([], discoverTypes({
       JobSchema: jobSchema,
       PersonSchema: personSchema,
     }).schemas);
@@ -535,7 +535,7 @@ describe("when an interface type contains a named nested schema", () => {
       inner2: innerSchema,
     });
 
-    const types = visit(discoverTypes({
+    const types = visit([], discoverTypes({
       OuterSchema: outerSchema,
     }).schemas);
 

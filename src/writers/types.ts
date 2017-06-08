@@ -1,5 +1,6 @@
+import { groupBy, keys, toPairs } from "lodash";
 import * as path from "path";
-
+import { Config } from "../config";
 import {
   isArray,
   isBasic,
@@ -7,8 +8,6 @@ import {
   isStringAlias,
   isStringUnion,
 } from "../schemaVisitor/predicates";
-
-import { Config } from "../config";
 import {
   BasicType,
   Field,
@@ -16,7 +15,6 @@ import {
   StringUnionType,
   VisitedType,
 } from "../schemaVisitor/types";
-
 import { headers } from "./shared";
 
 const basicToFieldType = (type: BasicType): string =>
@@ -111,6 +109,14 @@ export const buildTypeContent = (config: Config, types: VisitedType[]) => {
     lines.push("");
     lines.push(`import { Option } from "fp-ts/lib/Option";`);
   }
+
+  const sources = groupBy(toPairs(config.typeImports), ([_, source]) => source);
+
+  keys(sources).forEach(source => {
+    const importedTypes = sources[source].map(([ type ]) => type).sort().join(", ");
+
+    lines.push(`import { ${importedTypes} } from "${source}";`);
+  });
 
   lines.push("");
 

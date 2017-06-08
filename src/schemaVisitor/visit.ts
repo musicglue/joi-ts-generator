@@ -38,6 +38,7 @@ const visitSchemas = (schemas: Schema[]) =>
   );
 
 const hoistNestedTypes = (
+  importedTypes: string[],
   state: VisitedType[],
   types: VisitedType[],
 ): VisitedType[] => {
@@ -49,8 +50,9 @@ const hoistNestedTypes = (
   const fields = flatMap(interfaces, iface => iface.fields);
   const fieldTypes = fields.map(field => field.type);
   const namedFieldTypes = fieldTypes.filter(type => isString(type.name));
+  const unimportedNamedFieldTypes = namedFieldTypes.filter(type => !importedTypes.includes(type.name));
 
-  const mergedTypes = namedFieldTypes.reduce((memo, type) => {
+  const mergedTypes = unimportedNamedFieldTypes.reduce((memo, type) => {
     if (memo.find(m => m.name === type.name)) {
       return memo;
     }
@@ -62,7 +64,7 @@ const hoistNestedTypes = (
     return mergedTypes;
   }
 
-  return hoistNestedTypes(mergedTypes, fieldTypes);
+  return hoistNestedTypes(importedTypes, mergedTypes, fieldTypes);
 };
 
 const sortTypes = (types: VisitedType[]): VisitedType[] => {
@@ -83,9 +85,9 @@ const sortTypes = (types: VisitedType[]): VisitedType[] => {
   });
 };
 
-export const visit = (schemas: Schema[]): VisitedType[] => {
+export const visit = (importedTypes: string[], schemas: Schema[]): VisitedType[] => {
   const firstPass = visitSchemas(schemas);
-  const secondPass = hoistNestedTypes(firstPass, firstPass);
+  const secondPass = hoistNestedTypes(importedTypes, firstPass, firstPass);
   const thirdPass = sortTypes(secondPass);
 
   return thirdPass;

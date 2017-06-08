@@ -8,6 +8,7 @@ import {
   has,
   identity,
   isObject,
+  keys,
   map,
   mapKeys,
   pick,
@@ -30,7 +31,8 @@ const config = readConfig();
 const { exported, factories, schemas } = discoverTypesFromPath(
   config.paths.input,
 );
-const types = visit(schemas);
+
+const types = visit(keys(config.typeImports), schemas);
 
 fs.writeFileSync(config.paths.library, buildLibraryContent(config));
 fs.writeFileSync(config.paths.types, buildTypeContent(config, types));
