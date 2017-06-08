@@ -19,6 +19,14 @@ import {
 
 import { headers } from "./shared";
 
+const basicToFieldType = (type: BasicType): string =>
+  type.type === "date" ? "Date" : type.type;
+
+const basicToString = (type: VisitedType): string => {
+  return `export type ${type.name} = ${basicToFieldType(type.class as BasicType)};
+`;
+};
+
 const fieldToString = (field: Field): string => {
   if (isArray(field.type.class)) {
     const { elements } = field.type.class;
@@ -29,7 +37,7 @@ const fieldToString = (field: Field): string => {
   }
 
   if (isBasic(field.type.class)) {
-    return field.type.class.type;
+    return basicToFieldType(field.type.class);
   }
 
   return field.type.name;
@@ -72,6 +80,10 @@ ${alternatives};
 };
 
 const typeToString = (config: Config) => (type: VisitedType): string => {
+  if (isBasic(type.class)) {
+    return basicToString(type);
+  }
+
   if (isInterface(type.class)) {
     return interfaceToString(config, type);
   }

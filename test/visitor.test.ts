@@ -174,17 +174,9 @@ describe("a schema describing an object with a single required date field", () =
 
     const types = visit(discoverTypes({ EventSchema: schema }).schemas);
 
-    expect(types).toHaveLength(2);
+    expect(types).toHaveLength(1);
 
-    const aliasType = types[0];
-
-    if (!isStringAlias(aliasType.class)) {
-      fail();
-    }
-
-    expect(aliasType.name).toEqual("Date");
-
-    const interfaceType = types[1];
+    const interfaceType = types[0];
 
     if (!isInterface(interfaceType.class)) {
       return fail();
@@ -197,12 +189,12 @@ describe("a schema describing an object with a single required date field", () =
 
     const fieldType0 = interfaceType.class.fields[0].type;
 
-    if (!isStringAlias(fieldType0.class)) {
+    if (!isBasic(fieldType0.class)) {
       return fail();
     }
 
-    expect(fieldType0.class.kind).toEqual("string-alias");
-    expect(fieldType0.class.name).toEqual("Date");
+    expect(fieldType0.class.kind).toEqual("basic");
+    expect(fieldType0.class.type).toEqual("date");
   });
 });
 
@@ -384,17 +376,9 @@ describe("a schema describing an object with all the non-interface types", () =>
 
     const types = visit(discoverTypes({ SimpleTypesSchema: schema }).schemas);
 
-    expect(types).toHaveLength(3);
+    expect(types).toHaveLength(2);
 
-    const dateType = types[0];
-
-    if (!isStringAlias(dateType.class)) {
-      fail();
-    }
-
-    expect(dateType.name).toEqual("Date");
-
-    const uuidType = types[1];
+    const uuidType = types[0];
 
     if (!isStringAlias(uuidType.class)) {
       fail();
@@ -402,7 +386,7 @@ describe("a schema describing an object with all the non-interface types", () =>
 
     expect(uuidType.name).toEqual("Uuid");
 
-    const interfaceType = types[2];
+    const interfaceType = types[1];
 
     if (!isInterface(interfaceType.class)) {
       return fail();
@@ -440,11 +424,11 @@ describe("a schema describing an object with all the non-interface types", () =>
 
     expect(field0.type.class.type).toEqual("boolean");
 
-    if (!isStringAlias(field1.type.class)) {
+    if (!isBasic(field1.type.class)) {
       return fail();
     }
 
-    expect(field1.type.name).toEqual("Date");
+    expect(field1.type.class.type).toEqual("date");
 
     if (!isStringAlias(field2.type.class)) {
       return fail();

@@ -8,7 +8,7 @@ export interface Field {
   required: boolean;
 }
 
-export type BasicTypeNames = "boolean" | "number" | "object" | "string";
+export type BasicTypeNames = "boolean" | "date" | "number" | "object" | "string";
 
 export interface ArrayType {
   kind: "array";
