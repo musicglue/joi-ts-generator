@@ -77,7 +77,10 @@ const interfaceToImports = (typesPath: string, type: VisitedType): string[] => {
   const optionImports = importsToString("fp-ts/lib/Option", option);
   const typeImports = importsToString(typesPath, types);
 
-  return monocleImports.concat(optionImports).concat(typeImports);
+  return monocleImports
+    .concat(optionImports)
+    .concat(typeImports.length === 0 ? [] : [""])
+    .concat(typeImports);
 };
 
 const interfaceToString = (type: VisitedType): string[] => {
