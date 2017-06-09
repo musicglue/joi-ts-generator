@@ -1,6 +1,6 @@
 {
   "name": "@musicglue/joi-ts-generator",
-  "version": "5.0.2",
+  "version": "5.0.3",
   "description": "Generate Typescript Types from Joi schemas",
   "bin": {
     "joi-ts-gen": "dist/cli.js"
