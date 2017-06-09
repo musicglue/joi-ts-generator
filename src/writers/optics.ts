@@ -1,5 +1,5 @@
 import fs = require("fs");
-import { compact, flatMap, flatten, isString, sortBy, uniq } from "lodash";
+import { camelCase, compact, flatMap, flatten, isString, sortBy, uniq } from "lodash";
 import * as path from "path";
 import { Config } from "../config";
 import { isArray, isBasic, isInterface } from "../schemaVisitor/predicates";
@@ -24,15 +24,15 @@ const fieldTypeToString = (field: Field) => {
 };
 
 // tslint:disable-next-line:max-line-length
-const mandatoryLens = (name: string, fromType: string, toType: string) => `export const ${name}Lens: Lens<${fromType}, ${toType}> = Lens
-  .fromProp<${fromType}, "${name}">("${name}");
+const mandatoryLens = (lensName: string, propName: string, fromType: string, toType: string) => `export const ${lensName}Lens: Lens<${fromType}, ${toType}> = Lens
+  .fromProp<${fromType}, "${propName}">("${propName}");
 `;
 
 // tslint:disable-next-line:max-line-length
-const optionalLens = (name: string, fromType: string, toType: string) => `export const ${name}OptionalLens: Lens<${fromType}, Option<${toType}>> = Lens
-  .fromProp<${fromType}, "${name}">("${name}");
+const optionalLens = (lensName: string, propName: string, fromType: string, toType: string) => `export const ${lensName}OptionalLens: Lens<${fromType}, Option<${toType}>> = Lens
+  .fromProp<${fromType}, "${propName}">("${propName}");
 
-export const ${name}Lens: Optional<${fromType}, ${toType}> = ${name}OptionalLens
+export const ${lensName}Lens: Optional<${fromType}, ${toType}> = ${lensName}OptionalLens
   .composePrism(Prism.some<${toType}>());
 `;
 
@@ -84,7 +84,7 @@ const interfaceToString = (type: VisitedType): string[] => {
   const iface = type.class as InterfaceType;
 
   return sortBy(iface.fields, field => field.key)
-    .map(field => lensBuilder(field)(field.key, type.name, fieldTypeToString(field)));
+    .map(field => lensBuilder(field)(camelCase(field.key), field.key, type.name, fieldTypeToString(field)));
 };
 
 const writeOpticsForInterface = (config: Config) => (type: VisitedType): void => {
