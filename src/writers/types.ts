@@ -110,14 +110,22 @@ export const buildTypeContent = (config: Config, types: VisitedType[]) => {
   }
 
   const sources = groupBy(toPairs(config.typeImports), ([_, source]) => source);
+  const importExports: string[] = [];
 
   keys(sources).forEach(source => {
     const importedTypes = sources[source].map(([ type ]) => type).sort().join(", ");
 
     lines.push(`import { ${importedTypes} } from "${source}";`);
+    importExports.push(`export { ${importedTypes} };`);
   });
 
-  lines.push("");
+  if (importExports.length > 0) {
+    importExports.push("");
+  }
 
-  return lines.concat(types.map(typeToString(config))).join(`\n`);
+  return lines
+    .concat([""])
+    .concat(types.map(typeToString(config)))
+    .concat(importExports)
+    .join(`\n`);
 };
