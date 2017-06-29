@@ -59,17 +59,17 @@ const readConfig = (): Config => {
 
   const coerced = value.joiTsGenerator;
   const projectPath = path.dirname(packageJson.path);
-  const makePath = (p: string) => (p || "").toString().length > 0 ? path.join(projectPath, p) : null;
+  const makePath = (p: string) => (p || "").toString().length > 0 ? path.join(projectPath, p) : undefined;
 
   const config: Config = {
     nullableMode: coerced.nullableMode,
     paths: {
-      input: makePath(coerced.input),
-      library: makePath(coerced.outputs.library),
+      input: makePath(coerced.input) as string,
+      library: makePath(coerced.outputs.library) as string,
       optics: makePath(coerced.outputs.optics),
-      project: path.dirname(packageJson.path),
-      types: makePath(coerced.outputs.types),
-      utils: makePath(coerced.outputs.utils),
+      project: path.dirname(packageJson.path) as string,
+      types: makePath(coerced.outputs.types) as string,
+      utils: makePath(coerced.outputs.utils) as string,
     },
     typeImports: coerced.typeImports || {},
   };

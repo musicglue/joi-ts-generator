@@ -66,15 +66,24 @@ const wrapOptions = (schema: any, obj: any): any => {
     return obj;
   }
 
-  const fields = get(schema, "_inner.children", []);
+  const fields = get<any, any[]>(schema, "_inner.children", []);
 
   const wrappers: NodeWrapper[] = [wrapObject, wrapArray, plainValue];
 
+  const findApplicableWrapper = (field: any, value: any): NodeWrapper => {
+    const found = wrappers.find(w => w.applicable(field, value));
+
+    if (found === undefined) {
+      throw new Error(`Not able to find wrapper for ${field}: ${value}`);
+    }
+
+    return found;
+  };
+
   return fields.reduce((prev, field) => {
     const value = prev[field.key];
-    const maybeValue = wrappers
-      .find(w => w.applicable(field, value))
-      .wrap(field, value);
+    const wrapper = findApplicableWrapper(field, value);
+    const maybeValue = wrapper.wrap(field, value);
 
     return { ...prev, [field.key]: maybeValue };
   }, obj);

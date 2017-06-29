@@ -37,7 +37,7 @@ export const buildUtilsContent = (
   const coercionLines = coercibleTypes.reduce((memo, type) => {
     const hasFactory = factories.includes(type.name);
     return memo.concat([utilBlock(type.name, hasFactory)]);
-  }, []);
+  }, [] as any[]);
 
   const needsFactoryImport = types.find(type => factories.includes(type.name));
 

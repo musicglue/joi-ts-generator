@@ -92,7 +92,7 @@ const interfaceToString = (type: VisitedType): string[] => {
 
 const writeOpticsForInterface = (config: Config) => (type: VisitedType): void => {
   const fileName = type.name.charAt(0).toLowerCase() + type.name.substr(1);
-  const filePath = path.join(config.paths.optics, `${fileName}Lenses.generated.ts`);
+  const filePath = path.join(config.paths.optics as string, `${fileName}Lenses.generated.ts`);
   const relativePathToTypes = relativePath(filePath, config.paths.types);
 
   const content = headers()
