@@ -10,14 +10,15 @@
   "author": "Music Glue",
   "license": "MIT",
   "scripts": {
+    "build": "npm run clean && tsc && npm run copy-templates",
     "clean": "rm -rf dist",
     "copy-templates": "npm run purge-templates && cp -R src/writers/templates dist/writers",
-    "prepare-templates-dir": "mkdir -p dist/writers/templates",
-    "purge-templates": "npm run prepare-templates-dir && rm -rf dist/writers/templates",
-    "build": "npm run clean && tsc && npm run copy-templates",
     "make-executable": "chmod +x dist/cli.js",
+    "prepare-templates-dir": "mkdir -p dist/writers/templates",
+    "prepublish": "npm run build; npm run make-executable",
     "prettify": "prettier --write --parser typescript --trailing-comma all --list-different ./src/**/*.ts",
-    "prepublish": "npm run build; npm run make-executable"
+    "purge-templates": "npm run prepare-templates-dir && rm -rf dist/writers/templates",
+    "test": "./node_modules/.bin/jest"
   },
   "devDependencies": {
     "@types/jest": "^20.0.2",
