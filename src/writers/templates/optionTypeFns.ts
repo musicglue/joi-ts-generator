@@ -105,7 +105,7 @@ const unwrapOptions = (thing: any): any => {
   }
 
   if (isPlainObject(thing)) {
-    forOwn(thing, (v, k) => (thing[k] = unwrapOptions(v)));
+    forOwn(thing, (v, k) => { thing[k] = unwrapOptions(v); });
 
     return thing;
   }
