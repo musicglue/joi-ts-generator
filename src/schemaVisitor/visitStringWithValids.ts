@@ -9,7 +9,7 @@ export const visitStringWithValids: Visitor = visitSchema => schema => {
 
   const validStrings = schema._valids.values() as string[];
 
-  if (validStrings.length === 0) {
+  if (validStrings.length === 0 || !schema._flags.allowOnly) {
     return none;
   }
 

@@ -37,6 +37,24 @@ describe("a schema describing a string union", () => {
   });
 });
 
+describe("a schema describing a string that allows blanks", () => {
+  test("it is discovered as a string", () => {
+    const schema = joi.string().uppercase().allow("");
+    const types = visit([], discoverTypes({ FruitSchema: schema }).schemas);
+
+    expect(types).toHaveLength(1);
+
+    const type = types[0];
+
+    if (!isBasic(type.class)) {
+      return fail();
+    }
+
+    expect(type.name).toEqual("Fruit");
+    expect(type.class.type).toEqual("string");
+  });
+});
+
 describe("a schema describing an object with a single optional string field", () => {
   test("it is discovered as an interface", () => {
     const schema = joi.object().keys({
