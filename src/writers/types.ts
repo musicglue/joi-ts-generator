@@ -2,6 +2,7 @@ import { groupBy, keys, toPairs } from "lodash";
 import * as path from "path";
 import { Config } from "../config";
 import {
+  hasOptionalField,
   isArray,
   isBasic,
   isInterface,
@@ -104,7 +105,7 @@ const relativeImportPath = (from: string, to: string) => {
 export const buildTypeContent = (config: Config, types: VisitedType[]) => {
   const lines = headers();
 
-  if (config.nullableMode === "option") {
+  if (config.nullableMode === "option" && types.some(hasOptionalField)) {
     lines.push("");
     lines.push(`import { Option } from "fp-ts/lib/Option";`);
   }

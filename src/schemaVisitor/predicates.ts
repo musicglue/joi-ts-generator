@@ -1,10 +1,12 @@
 import {
   ArrayType,
   BasicType,
+  Field,
   InterfaceType,
   Schema,
   StringUnionType,
   VisitedTypeClass,
+  VisitedType,
 } from "./types";
 
 export function isArray(klass: VisitedTypeClass): klass is ArrayType {
@@ -30,3 +32,9 @@ export const isGuid = (schema: Schema) =>
 
 export const isRequired = (schema: Schema) =>
   (schema._flags.presence || "optional") === "required";
+
+export const isOptionalField = (f: Field) => !f.required;
+
+export const hasOptionalField = (t: VisitedType) =>
+  isInterface(t.class) && t.class.fields.some(isOptionalField);
+
