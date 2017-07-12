@@ -1,5 +1,5 @@
 import fs = require("fs");
-import { camelCase, compact, flatMap, flatten, isString, sortBy, uniq } from "lodash";
+import { camelCase, compact, flatMap, flatten, isString, sortBy, uniq, without } from "lodash";
 import * as path from "path";
 import { Config } from "../config";
 import { isArray, isBasic, isInterface } from "../schemaVisitor/predicates";
@@ -75,7 +75,7 @@ const interfaceToImports = (typesPath: string, type: VisitedType): string[] => {
 
   const monocleImports = importsToString("monocle-ts", monocle);
   const optionImports = importsToString("fp-ts/lib/Option", option);
-  const typeImports = importsToString(typesPath, types);
+  const typeImports = importsToString(typesPath, without(types, "string", "number", "boolean"));
 
   return monocleImports
     .concat(optionImports)
