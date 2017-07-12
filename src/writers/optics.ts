@@ -83,11 +83,17 @@ const interfaceToImports = (typesPath: string, type: VisitedType): string[] => {
     .concat(typeImports);
 };
 
+const camelizeFieldKey = (key: string) => {
+  const camelized = camelCase(key);
+
+  return key.startsWith("__") ? `__${camelized}` : camelized;
+};
+
 const interfaceToString = (type: VisitedType): string[] => {
   const iface = type.class as InterfaceType;
 
   return sortBy(iface.fields, field => field.key)
-    .map(field => lensBuilder(field)(camelCase(field.key), field.key, type.name, fieldTypeToString(field)));
+    .map(field => lensBuilder(field)(camelizeFieldKey(field.key), field.key, type.name, fieldTypeToString(field)));
 };
 
 const writeOpticsForInterface = (config: Config) => (type: VisitedType): void => {
