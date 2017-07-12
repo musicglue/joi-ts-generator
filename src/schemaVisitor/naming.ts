@@ -1,4 +1,4 @@
-import { isString } from "lodash";
+import { isString, last } from "lodash";
 
 import {
   isBasic,
@@ -11,9 +11,9 @@ import { Schema, VisitedType } from "./types";
 const typeNotePrefix = /^type:/;
 
 export const nameFromNotes = (schema: Schema): string =>
-  schema._notes
+  last(schema._notes
     .filter(note => typeNotePrefix.test(note))
-    .map(note => note.replace(typeNotePrefix, ""))[0];
+    .map(note => note.replace(typeNotePrefix, ""))) as string;
 
 export const toTypeName = (type: VisitedType): string => {
   if (isString(type.name)) {
