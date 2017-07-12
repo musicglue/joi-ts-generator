@@ -1,4 +1,5 @@
 # joi-ts-generator
+
 Generate Typescript Types from Joi Schemae
 
 ### Installing
@@ -25,7 +26,7 @@ such as the following:
 }
 ```
 
-You can then rebuild your types by running `npm run regenerate-joi-types`.
+You can then rebuild your types by running `yarn regenerate-joi-types`.
 
 ### Defining
 
@@ -66,8 +67,7 @@ export interface Purchase {
 }
 ```
 
-
-### Troubleshooting
+### Troubleshooting
 
 If you are defining string types and find that you get unexpected results, please follow the following:
 
