@@ -26,6 +26,11 @@ export const arrayToFieldType = (type: ArrayType): string => {
     : `${elements[0]}[]`;
 };
 
+export const arrayToString = (type: VisitedType): string => {
+  return `export type ${type.name} = ${(type.class as ArrayType).elements[0]}[];
+`;
+};
+
 export const basicToFieldType = (type: BasicType): string =>
   type.type === "date" ? "Date" : type.type;
 
@@ -82,6 +87,10 @@ ${alternatives};
 };
 
 const typeToString = (config: Config) => (type: VisitedType): string => {
+  if (isArray(type.class)) {
+    return arrayToString(type);
+  }
+
   if (isBasic(type.class)) {
     return basicToString(type);
   }

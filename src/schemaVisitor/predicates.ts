@@ -5,8 +5,8 @@ import {
   InterfaceType,
   Schema,
   StringUnionType,
-  VisitedTypeClass,
   VisitedType,
+  VisitedTypeClass,
 } from "./types";
 
 export function isArray(klass: VisitedTypeClass): klass is ArrayType {
@@ -37,4 +37,3 @@ export const isOptionalField = (f: Field) => !f.required;
 
 export const hasOptionalField = (t: VisitedType) =>
   isInterface(t.class) && t.class.fields.some(isOptionalField);
-
