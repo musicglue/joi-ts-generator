@@ -10,6 +10,11 @@ export interface Field {
 
 export type BasicTypeNames = "boolean" | "date" | "number" | "object" | "string";
 
+export interface UnionType {
+  kind: "union";
+  alternatives: string[];
+}
+
 export interface ArrayType {
   kind: "array";
   elements: string[];
@@ -39,6 +44,7 @@ export type VisitedTypeClass =
   | BasicType
   | InterfaceType
   | StringUnionType
+  | UnionType
   | UnknownType;
 
 export interface VisitedType {

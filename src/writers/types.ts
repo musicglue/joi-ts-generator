@@ -7,6 +7,7 @@ import {
   isBasic,
   isInterface,
   isStringUnion,
+  isUnion,
 } from "../schemaVisitor/predicates";
 import {
   ArrayType,
@@ -15,6 +16,7 @@ import {
   InterfaceType,
   StringUnionType,
   VisitedType,
+  UnionType,
 } from "../schemaVisitor/types";
 import { headers } from "./shared";
 
@@ -86,6 +88,15 @@ ${alternatives};
 `;
 };
 
+const unionToString = (type: VisitedType): string => {
+  const union = type.class as UnionType;
+  const alternatives = union.alternatives.map(alt => `  | "${alt}"`).join(`\n`);
+
+  return `export type ${type.name} =
+${alternatives};
+`;
+};
+
 const typeToString = (config: Config) => (type: VisitedType): string => {
   if (isArray(type.class)) {
     return arrayToString(type);
@@ -101,6 +112,10 @@ const typeToString = (config: Config) => (type: VisitedType): string => {
 
   if (isStringUnion(type.class)) {
     return stringUnionToString(type);
+  }
+
+  if (isUnion(type.class)) {
+    return unionToString(type);
   }
 
   return `// Unknown type: ${type.name} (${type.class})}`;

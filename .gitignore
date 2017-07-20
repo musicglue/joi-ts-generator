@@ -38,3 +38,6 @@ jspm_packages
 build/
 .vs/
 dist/
+
+# VSCode workspace
+.vscode
