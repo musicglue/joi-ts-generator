@@ -5,6 +5,7 @@ import {
   InterfaceType,
   Schema,
   StringUnionType,
+  UnionType,
   VisitedType,
   VisitedTypeClass,
 } from "./types";
@@ -34,6 +35,10 @@ export const isRequired = (schema: Schema) =>
   (schema._flags.presence || "optional") === "required";
 
 export const isOptionalField = (f: Field) => !f.required;
+
+export function isUnion(klass: VisitedTypeClass): klass is UnionType {
+  return klass.kind === "union";
+}
 
 export const hasOptionalField = (t: VisitedType) =>
   isInterface(t.class) && t.class.fields.some(isOptionalField);
