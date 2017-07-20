@@ -7,6 +7,7 @@ import {
   isStringUnion,
 } from "./predicates";
 import { InterfaceType, Schema, VisitedType, Visitor } from "./types";
+import { visitAlternatives } from "./visitAlternatives";
 import { visitArray } from "./visitArray";
 import { visitBoolean } from "./visitBoolean";
 import { visitDate } from "./visitDate";
@@ -18,6 +19,7 @@ import { visitString } from "./visitString";
 import { visitStringWithValids } from "./visitStringWithValids";
 
 const visitors: Visitor[] = [
+  visitAlternatives,
   visitArray,
   visitObject,
   visitGuid,
