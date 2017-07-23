@@ -15,8 +15,8 @@ import {
   Field,
   InterfaceType,
   StringUnionType,
-  VisitedType,
   UnionType,
+  VisitedType,
 } from "../schemaVisitor/types";
 import { headers } from "./shared";
 
@@ -90,7 +90,7 @@ ${alternatives};
 
 const unionToString = (type: VisitedType): string => {
   const union = type.class as UnionType;
-  const alternatives = union.alternatives.map(alt => `  | "${alt}"`).join(`\n`);
+  const alternatives = union.alternatives.map(alt => `  | ${alt}`).join(`\n`);
 
   return `export type ${type.name} =
 ${alternatives};
