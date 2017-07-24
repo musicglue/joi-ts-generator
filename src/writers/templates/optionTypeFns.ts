@@ -20,11 +20,15 @@ const defaultOptions: joi.ValidationOptions = {
   stripUnknown: { objects: true },
 };
 
+const getFields = (schema: any) =>
+  get<any, any[]>(schema, "_inner.children", []);
+
 const maybeWrap = (node: any, value: any) =>
   isRequiredNode(node) ? value : wrapOption(value);
 
 const isRequiredNode = (node: any) =>
-  get(node, "schema._flags.presence") === "required";
+  (get(node, "schema._flags.presence") === "required") ||
+  (get(node, "_flags.presence") === "required");
 
 const plainValue: NodeWrapper = {
   applicable: () => true,
@@ -61,24 +65,43 @@ const wrapOption = (val: any) => {
   return option.some(val);
 };
 
-const wrapOptions = (schema: any, obj: any): any => {
-  if (isValueless(obj)) {
-    return obj;
-  }
-
-  const fields = get<any, any[]>(schema, "_inner.children", []);
-
-  const wrappers: NodeWrapper[] = [wrapObject, wrapArray, plainValue];
-
-  const findApplicableWrapper = (field: any, value: any): NodeWrapper => {
-    const found = wrappers.find(w => w.applicable(field, value));
-
-    if (found === undefined) {
-      throw new Error(`Not able to find wrapper for ${field}: ${value}`);
+const coerceNullToUndefined = (schema: any, obj: any): any => {
+  if (obj == null) {
+    if (isRequiredNode(schema)) {
+      return obj;
     }
 
-    return found;
-  };
+    return undefined;
+  }
+
+  const fields = getFields(schema);
+
+  return fields.reduce((prev, field) => {
+    const value = prev[field.key];
+    const coerced = (value == null) && !isRequiredNode(field) ? undefined : value;
+
+    return { ...prev, [field.key]: coerced };
+  }, obj);
+};
+
+const wrappers: NodeWrapper[] = [wrapObject, wrapArray, plainValue];
+
+const findApplicableWrapper = (field: any, value: any): NodeWrapper => {
+  const found = wrappers.find(w => w.applicable(field, value));
+
+  if (found === undefined) {
+    throw new Error(`Not able to find wrapper for ${field}: ${value}`);
+  }
+
+  return found;
+};
+
+const wrapOptions = (schema: any, obj: any): any => {
+  if (isValueless(obj)) {
+    return findApplicableWrapper(schema, obj).wrap(schema, obj);
+  }
+
+  const fields = getFields(schema);
 
   return fields.reduce((prev, field) => {
     const value = prev[field.key];
@@ -128,13 +151,16 @@ export function coerceFactory<T>(
   return (attrs?: any, options?: any): T =>
     coerceValue<T>(schema)(factory.build(attrs, options));
 }
+
 export function coerceValue<T>(schema: joi.Schema) {
   return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: any;
+    const cloned = cloneToPlainObject(object);
+    const nullCoerced = coerceNullToUndefined(schema, cloned) || null;
 
     joi.validate(
-      cloneToPlainObject(object),
+      nullCoerced,
       schema,
       resolvedOptions,
       (err, result) => {
@@ -145,12 +171,13 @@ export function coerceValue<T>(schema: joi.Schema) {
       },
     );
 
-    return freeze(wrapOptions(schema, coerced)) as T;
+    const wrappedCoerced = wrapOptions(schema, coerced);
+    return wrappedCoerced == null ? wrappedCoerced : freeze(wrappedCoerced);
   };
 }
+
+export const isValueless = (obj: any) => obj === undefined || obj === null;
 
 export function mapOptionalFieldsToOptions<T>(schema: joi.Schema) {
   return (obj: any): T => wrapOptions(schema, obj);
 }
-
-export const isValueless = (obj: any) => obj === undefined || obj === null;
