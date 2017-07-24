@@ -78,7 +78,10 @@ const coerceNullToUndefined = (schema: any, obj: any): any => {
 
   return fields.reduce((prev, field) => {
     const value = prev[field.key];
-    const coerced = (value == null) && !isRequiredNode(field) ? undefined : value;
+
+    const coerced = (value == null) && !isRequiredNode(field)
+      ? undefined
+      : coerceNullToUndefined(field.schema, value);
 
     return { ...prev, [field.key]: coerced };
   }, obj);

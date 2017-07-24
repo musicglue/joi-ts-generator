@@ -31,10 +31,15 @@ describe("coerce for option types", () => {
   describe("when an attribute is not required()", () => {
     describe("and the attribute is an object", () => {
       test("it converts null to undefined before calling joi", () => {
-        const schema = joi.object().keys({ name: joi.string() });
-        const output: any = coerceValue(schema)({ name: null });
+        const schema = joi.object().keys({
+          person: joi.object().keys({
+             name: joi.string(),
+          }).required(),
+        });
 
-        expect(option.isNone(output.name)).toBeTruthy();
+        const output: any = coerceValue(schema)({ person: { name: null }});
+
+        expect(option.isNone(output.person.name)).toBeTruthy();
       });
     });
 
