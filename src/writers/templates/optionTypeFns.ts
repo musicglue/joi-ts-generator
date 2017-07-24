@@ -65,28 +65,6 @@ const wrapOption = (val: any) => {
   return option.some(val);
 };
 
-const coerceNullToUndefined = (schema: any, obj: any): any => {
-  if (obj == null) {
-    if (isRequiredNode(schema)) {
-      return obj;
-    }
-
-    return undefined;
-  }
-
-  const fields = getFields(schema);
-
-  return fields.reduce((prev, field) => {
-    const value = prev[field.key];
-
-    const coerced = (value == null) && !isRequiredNode(field)
-      ? undefined
-      : coerceNullToUndefined(field.schema, value);
-
-    return { ...prev, [field.key]: coerced };
-  }, obj);
-};
-
 const wrappers: NodeWrapper[] = [wrapObject, wrapArray, plainValue];
 
 const findApplicableWrapper = (field: any, value: any): NodeWrapper => {
@@ -159,11 +137,9 @@ export function coerceValue<T>(schema: joi.Schema) {
   return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: any;
-    const cloned = cloneToPlainObject(object);
-    const nullCoerced = coerceNullToUndefined(schema, cloned) || null;
 
     joi.validate(
-      nullCoerced,
+      cloneToPlainObject(object),
       schema,
       resolvedOptions,
       (err, result) => {

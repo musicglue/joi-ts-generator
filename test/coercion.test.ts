@@ -10,7 +10,7 @@ describe("coerce for option types", () => {
 
   describe("when an attribute is required()", () => {
     describe("and the attribute is an object", () => {
-      test("it does not convert null to undefined before calling joi", () => {
+      test("it does not convert null", () => {
         const schema = joi.object().keys({ name: joi.string().required().allow(null) });
         const output: any = coerceValue(schema)({ name: null });
 
@@ -19,7 +19,7 @@ describe("coerce for option types", () => {
     });
 
     describe("and the attribute is not an object", () => {
-      test("it does not convert null to undefined before calling joi", () => {
+      test("it does not convert null", () => {
         const schema = joi.string().allow(null).required();
         const output: any = coerceValue(schema)(null);
 
@@ -30,10 +30,10 @@ describe("coerce for option types", () => {
 
   describe("when an attribute is not required()", () => {
     describe("and the attribute is an object", () => {
-      test("it converts null to undefined before calling joi", () => {
+      test("it converts null to None", () => {
         const schema = joi.object().keys({
           person: joi.object().keys({
-             name: joi.string(),
+             name: joi.string().allow(null),
           }).required(),
         });
 
@@ -44,7 +44,7 @@ describe("coerce for option types", () => {
     });
 
     describe("and the attribute is not an object", () => {
-      test("it converts null to undefined before calling joi", () => {
+      test("it converts null to None", () => {
         const schema = joi.string().allow(null);
         const output: any = coerceValue(schema)(null);
 
