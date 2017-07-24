@@ -21,7 +21,7 @@ const defaultOptions: joi.ValidationOptions = {
 };
 
 const getFields = (schema: any) =>
-  get<any, any[]>(schema, "_inner.children", []);
+  get<any, any[]>(schema, "_inner.children", []) || [];
 
 const maybeWrap = (node: any, value: any) =>
   isRequiredNode(node) ? value : wrapOption(value);
