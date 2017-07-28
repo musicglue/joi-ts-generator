@@ -1,6 +1,6 @@
 import { none, some } from "fp-ts/lib/Option";
 import { nameFromNotes } from "./naming";
-import { isGuid } from "./predicates";
+import { isGuid, isNullable } from "./predicates";
 import { BasicType, VisitedType, Visitor } from "./types";
 
 export const visitGuid: Visitor = visitSchema => schema => {
@@ -20,6 +20,7 @@ export const visitGuid: Visitor = visitSchema => schema => {
   const type: VisitedType = {
     class: basicType,
     name: "Uuid",
+    nullable: isNullable(schema),
   };
 
   return some(type);

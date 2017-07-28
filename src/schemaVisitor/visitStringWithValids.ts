@@ -1,5 +1,7 @@
 import { none, some } from "fp-ts/lib/Option";
+import { compact } from "lodash";
 import { nameFromNotes } from "./naming";
+import { isNullable } from "./predicates";
 import { StringUnionType, VisitedType, Visitor } from "./types";
 
 export const visitStringWithValids: Visitor = visitSchema => schema => {
@@ -7,20 +9,23 @@ export const visitStringWithValids: Visitor = visitSchema => schema => {
     return none;
   }
 
-  const validStrings = schema._valids.values() as string[];
+  const nullable = isNullable(schema);
+  const valids = schema._valids.values() as Array<string | null>;
+  const validStrings = compact(valids);
 
   if (validStrings.length === 0 || !schema._flags.allowOnly) {
     return none;
   }
 
   const stringUnion: StringUnionType = {
-    alternatives: validStrings,
+    alternatives: valids,
     kind: "string-union",
   };
 
   const type: VisitedType = {
     class: stringUnion,
     name: nameFromNotes(schema),
+    nullable,
   };
 
   return some(type);

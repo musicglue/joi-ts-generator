@@ -31,7 +31,7 @@ const visitors: Visitor[] = [
   visitString,
 ];
 
-const visitSchema = buildVisitSchema(visitors);
+export const visitSchema = buildVisitSchema(visitors);
 
 const visitSchemas = (schemas: Schema[]) =>
   schemas.reduce(

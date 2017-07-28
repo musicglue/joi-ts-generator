@@ -20,16 +20,16 @@ import {
 } from "../schemaVisitor/types";
 import { headers } from "./shared";
 
-export const arrayToFieldType = (type: ArrayType): string => {
-  const { elements } = type;
+export const arrayToFieldType = (config: Config, type: ArrayType): string => {
+  const elementStrings = type.elements.map(e => e == null ? "null" : e);
 
-  return elements.length > 1
-    ? `Array<${elements.join(" | ")}>`
-    : `${elements[0]}[]`;
+  return elementStrings.length > 1
+    ? `Array<${elementStrings.join(" | ")}>`
+    : `${elementStrings[0]}[]`;
 };
 
 export const arrayToString = (type: VisitedType): string => {
-  return `export type ${type.name} = ${(type.class as ArrayType).elements[0]}[];
+  return `export type ${type.name} = ${arrayToFieldType(type.class as ArrayType)};
 `;
 };
 
@@ -97,7 +97,7 @@ ${alternatives};
 `;
 };
 
-const typeToString = (config: Config) => (type: VisitedType): string => {
+export const typeToString = (config: Config) => (type: VisitedType): string => {
   if (isArray(type.class)) {
     return arrayToString(type);
   }

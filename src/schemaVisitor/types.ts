@@ -17,7 +17,7 @@ export interface UnionType {
 
 export interface ArrayType {
   kind: "array";
-  elements: string[];
+  elements: Array<string | null>;
 }
 
 export interface BasicType {
@@ -32,7 +32,7 @@ export interface InterfaceType {
 
 export interface StringUnionType {
   kind: "string-union";
-  alternatives: string[];
+  alternatives: Array<string | null>;
 }
 
 export interface UnknownType {
@@ -50,6 +50,7 @@ export type VisitedTypeClass =
 export interface VisitedType {
   class: VisitedTypeClass;
   name: string;
+  nullable: boolean;
 }
 
 export interface State {

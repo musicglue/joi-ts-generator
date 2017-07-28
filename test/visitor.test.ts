@@ -8,6 +8,7 @@ import {
   isBasic,
   isInterface,
   isStringUnion,
+  isUnion,
 } from "../src/schemaVisitor/predicates";
 
 describe("a schema that has no Schema suffix", () => {
@@ -34,6 +35,42 @@ describe("a schema describing a string union", () => {
 
     expect(type.name).toEqual("Fruit");
     expect(type.class.alternatives).toEqual(["apple", "orange"]);
+  });
+});
+
+describe("a schema describing a string union that allows null", () => {
+  test("it is discovered as a string union", () => {
+    const schema = joi.string().uppercase().valid(["apple", "orange"]).allow(null);
+    const types = visit([], discoverTypes({ FruitSchema: schema }).schemas);
+
+    expect(types).toHaveLength(1);
+
+    const type = types[0];
+
+    if (!isStringUnion(type.class)) {
+      return fail();
+    }
+
+    expect(type.name).toEqual("Fruit");
+    expect(type.class.alternatives).toEqual(["apple", "orange", null]);
+  });
+});
+
+describe("a schema describing a string that allows nulls", () => {
+  test("it is discovered as a union of string or null", () => {
+    const schema = joi.string().uppercase().allow(null);
+    const types = visit([], discoverTypes({ FruitSchema: schema }).schemas);
+
+    expect(types).toHaveLength(1);
+
+    const type = types[0];
+
+    if (!isUnion(type.class)) {
+      return fail();
+    }
+
+    expect(type.name).toEqual("Fruit");
+    expect(type.class.alternatives).toEqual(["string", "null"]);
   });
 });
 
@@ -252,6 +289,25 @@ describe("a schema describing an object with a single required guid field", () =
 
     expect(fieldType0.class.kind).toEqual("basic");
     expect(fieldType0.class.type).toEqual("string");
+  });
+});
+
+describe("a schema describing an array of a nullable number", () => {
+  test("it is discovered as an array", () => {
+    const schema = joi.array().items(joi.number().allow(null));
+    const types = visit([], discoverTypes({ ArraySchema: schema }).schemas);
+
+    expect(types).toHaveLength(1);
+
+    const type = types[0];
+
+    if (!isArray(type.class)) {
+      return fail();
+    }
+
+    expect(type.name).toEqual("Array");
+    expect(type.class.elements).toHaveLength(2);
+    expect(type.class.elements).toEqual(["number", null]);
   });
 });
 

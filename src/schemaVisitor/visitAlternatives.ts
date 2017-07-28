@@ -1,6 +1,7 @@
 import { none, some } from "fp-ts/lib/Option";
 import { uniq } from "lodash";
 import { nameFromNotes } from "./naming";
+import { isNullable } from "./predicates";
 import { UnionType, VisitedType, Visitor } from "./types";
 
 export const visitAlternatives: Visitor = visitSchema => schema => {
@@ -26,6 +27,7 @@ export const visitAlternatives: Visitor = visitSchema => schema => {
   const type: VisitedType = {
     class: typesUnion,
     name: nameFromNotes(schema),
+    nullable: isNullable(schema),
   };
 
   return some(type);

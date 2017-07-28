@@ -1,6 +1,6 @@
 import { none, some } from "fp-ts/lib/Option";
 import { nameFromNotes } from "./naming";
-import { isRequired } from "./predicates";
+import { isNullable, isRequired } from "./predicates";
 
 import {
   BasicType,
@@ -24,12 +24,13 @@ export const visitObject: Visitor = visitSchema => schema => {
       type: "object",
     };
 
-    const type: VisitedType = {
+    const childType: VisitedType = {
       class: basicType,
       name: nameFromNotes(schema),
+      nullable: isNullable(schema),
     };
 
-    return some(type);
+    return some(childType);
   }
 
   const fields: Field[] = children.map(
@@ -49,6 +50,7 @@ export const visitObject: Visitor = visitSchema => schema => {
   const type: VisitedType = {
     class: iface,
     name: nameFromNotes(schema),
+    nullable: isNullable(schema),
   };
 
   return some(type);
