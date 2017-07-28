@@ -21,16 +21,16 @@
     "test": "./node_modules/.bin/jest"
   },
   "devDependencies": {
-    "@types/jest": "^20.0.2",
+    "@types/jest": "^20.0.5",
     "@types/joi": "^10.4.0",
-    "@types/lodash": "^4.14.68",
-    "@types/node": "^8.0.7",
+    "@types/lodash": "^4.14.71",
+    "@types/node": "^8.0.17",
     "@types/rosie": "^0.0.30",
     "jest": "^20.0.4",
     "joi": "^10.6.0",
-    "prettier": "^1.5.2",
-    "ts-jest": "^20.0.6",
-    "ts-node": "^3.2.0",
+    "prettier": "^1.5.3",
+    "ts-jest": "^20.0.7",
+    "ts-node": "^3.3.0",
     "tslint": "^5.5.0",
     "typescript": "2.4.0"
   },
