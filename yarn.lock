@@ -745,9 +745,9 @@ form-data@~2.1.1:
     combined-stream "^1.0.5"
     mime-types "^2.1.12"
 
-fp-ts@^0.3.5:
-  version "0.3.5"
-  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-0.3.5.tgz#eb00258e0c2643ae370a4588b12e7b71dee985bc"
+fp-ts@^0.4.5:
+  version "0.4.5"
+  resolved "https://registry.yarnpkg.com/fp-ts/-/fp-ts-0.4.5.tgz#ffb8fa174d28131f31d978e9fc24cabca413aba8"
 
 fs-extra@^3.0.0:
   version "3.0.1"
@@ -2214,9 +2214,9 @@ type-check@~0.3.2:
   dependencies:
     prelude-ls "~1.1.2"
 
-typescript@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.0.tgz#aef5a8d404beba36ad339abf079ddddfffba86dd"
+typescript@^2.4.2:
+  version "2.4.2"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.2.tgz#f8395f85d459276067c988aa41837a8f82870844"
 
 uglify-js@^2.6:
   version "2.8.28"
