@@ -52,4 +52,18 @@ describe("coerce for option types", () => {
       });
     });
   });
+
+  describe("when the schema defines an array", () => {
+    test("it converts deeply nested nulls to options", () => {
+      const objectSchema = joi.object().keys({ foo: joi.string().allow(null) });
+      const innerArraySchema = joi.array().items(objectSchema).required();
+      const outerArraySchema = joi.array().items(innerArraySchema);
+
+      const output: any = coerceValue(outerArraySchema)([[{}]]);
+
+      expect(option.isSome(output)).toBeTruthy();
+      expect(Array.isArray(output.toNullable())).toBeTruthy();
+      expect(option.isNone(output.toNullable()[0][0].foo)).toBeTruthy();
+    });
+  });
 });

@@ -26,6 +26,9 @@ const getFields = (schema: any) =>
 const maybeWrap = (node: any, value: any) =>
   isRequiredNode(node) ? value : wrapOption(value);
 
+const isArrayNode = (node: any) =>
+  get(node, "schema._type") === "array";
+
 const isRequiredNode = (node: any) =>
   (get(node, "schema._flags.presence") === "required") ||
   (get(node, "_flags.presence") === "required");
@@ -37,7 +40,7 @@ const plainValue: NodeWrapper = {
 
 const wrapArray: NodeWrapper = {
   applicable: (node, value) =>
-    get(node, "schema._type") === "array" && isArray(value),
+    isArrayNode(node) && isArray(value),
 
   wrap: (node, value) =>
     maybeWrap(
@@ -80,6 +83,10 @@ const findApplicableWrapper = (field: any, value: any): NodeWrapper => {
 const wrapOptions = (schema: any, obj: any): any => {
   if (isValueless(obj)) {
     return findApplicableWrapper(schema, obj).wrap(schema, obj);
+  }
+
+  if (isArrayNode({ schema })) {
+    return findApplicableWrapper({ schema }, obj).wrap({ schema }, obj);
   }
 
   const fields = getFields(schema);

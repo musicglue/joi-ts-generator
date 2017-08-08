@@ -18,7 +18,7 @@
     "prepublish": "npm run build; npm run make-executable",
     "prettify": "prettier --write --parser typescript --trailing-comma all --list-different ./src/**/*.ts",
     "purge-templates": "npm run prepare-templates-dir && rm -rf dist/writers/templates",
-    "test": "./node_modules/.bin/jest"
+    "test": "./node_modules/.bin/jest --no-watchman"
   },
   "devDependencies": {
     "@types/jest": "^20.0.6",
