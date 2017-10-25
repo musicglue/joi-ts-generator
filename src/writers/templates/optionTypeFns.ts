@@ -135,12 +135,12 @@ export const cloneToPlainObject = (obj: any) => unwrapOptions(cloneDeep(obj));
 export function coerceFactory<T>(
   factory: Factory.IFactory,
   schema: joi.Schema,
-) {
+): (attrs?: any, options?: any) => T {
   return (attrs?: any, options?: any): T =>
     coerceValue<T>(schema)(factory.build(attrs, options));
 }
 
-export function coerceValue<T>(schema: joi.Schema) {
+export function coerceValue<T>(schema: joi.Schema): (object: any, options?: any) => T {
   return (object: any, options?: any): T => {
     const resolvedOptions = Object.assign({}, defaultOptions, options);
     let coerced: any;
@@ -164,6 +164,6 @@ export function coerceValue<T>(schema: joi.Schema) {
 
 export const isValueless = (obj: any) => obj === undefined || obj === null;
 
-export function mapOptionalFieldsToOptions<T>(schema: joi.Schema) {
+export function mapOptionalFieldsToOptions<T>(schema: joi.Schema): (obj: any) => T {
   return (obj: any): T => wrapOptions(schema, obj);
 }

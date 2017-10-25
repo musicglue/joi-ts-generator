@@ -11,6 +11,10 @@
     ],
     "interface-name": [
       false
+    ],
+    "typedef": [
+      true,
+      "call-signature"
     ]
   },
   "rulesDirectory": []
