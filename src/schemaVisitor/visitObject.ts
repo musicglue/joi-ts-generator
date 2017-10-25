@@ -24,12 +24,12 @@ export const visitObject: Visitor = visitSchema => schema => {
       type: "object",
     };
 
-    const type: VisitedType = {
+    const type2: VisitedType = {
       class: basicType,
       name: nameFromNotes(schema),
     };
 
-    return some(type);
+    return some(type2);
   }
 
   const fields: Field[] = children.map(
