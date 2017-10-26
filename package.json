@@ -40,7 +40,7 @@
     "lodash": "^4.17.4",
     "read-pkg-up": "^2.0.0",
     "rosie": "^1.6.0",
-    "unquoted-property-validator": "^1.0.0"
+    "unquoted-property-validator": "^1.0.2"
   },
   "jest": {
     "moduleFileExtensions": [
