@@ -1,3 +1,7 @@
+# Deperated
+
+This project is no longer maintained. If you wish to adopt the project, open an issue.
+
 # joi-ts-generator
 
 Generate Typescript Types from Joi Schemae
@@ -18,7 +22,10 @@ such as the following:
   },
   "joiTsGenerator": {
     "input": "./src/schemas/index.ts",
+    "nullableMode": "option",
     "outputs": {
+      "library": "./src/coercion.generated.ts",
+      "optics": "./src/optics",
       "types": "./src/schemas/types.ts",
       "utils": "./src/schemas/utils.ts"
     }
