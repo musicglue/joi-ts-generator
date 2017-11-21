@@ -1,4 +1,4 @@
-# Deperated
+# Deprecated
 
 This project is no longer maintained. If you wish to adopt the project, open an issue.
 
