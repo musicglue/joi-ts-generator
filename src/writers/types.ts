@@ -1,5 +1,6 @@
 import { groupBy, keys, toPairs } from "lodash";
 import * as path from "path";
+import unquotedValidator = require("unquoted-property-validator");
 import { Config } from "../config";
 import {
   hasOptionalField,
@@ -57,13 +58,16 @@ const fieldToString = (field: Field): string => {
   return field.type.name;
 };
 
+const encodeFieldKey = (key: string): string => unquotedValidator(key).quotedValue;
+
 const interfaceToString = (config: Config, type: VisitedType): string => {
   const iface = type.class as InterfaceType;
   const fields = iface.fields
     .map(field => {
+      const encodedKey = encodeFieldKey(field.key);
       const key = config.nullableMode === "option" || field.required
-        ? field.key
-        : `${field.key}?`;
+        ? encodedKey
+        : `${encodedKey}?`;
       const fieldType = fieldToString(field);
       const maybeFieldType = config.nullableMode === "option" && !field.required
         ? `Option<${fieldType}>`
@@ -97,7 +101,7 @@ ${alternatives};
 `;
 };
 
-const typeToString = (config: Config) => (type: VisitedType): string => {
+export const typeToString = (config: Config) => (type: VisitedType): string => {
   if (isArray(type.class)) {
     return arrayToString(type);
   }
