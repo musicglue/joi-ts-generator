@@ -10,8 +10,9 @@
   "author": "Music Glue",
   "license": "MIT",
   "scripts": {
-    "build": "npm run clean && tsc && npm run copy-templates",
+    "build": "npm run clean && npm run lint && tsc && npm run copy-templates",
     "clean": "rm -rf dist",
+    "lint": "tslint --format prose --project .",
     "copy-templates": "npm run purge-templates && cp -R src/writers/templates dist/writers",
     "make-executable": "chmod +x dist/cli.js",
     "prepare-templates-dir": "mkdir -p dist/writers/templates",
